@@ -1,0 +1,31 @@
+Epics: 
+
+As a user, I want to find nearby hot food vans, so that I can find food on the go. 
+
+As a user, I want to be able to see a visual map of the vans, so that I can plan my route accordingly. 
+
+As a user, I want to find out if my favourite food van is open, so that I can go there. 
+
+As a user, I want to be able to put businesses I like into favourite category, so I can quickly search them 
+
+ 
+
+As a business user, I want to create an online presence, so that customers can find out where I am located for the day. 
+
+As a business user, I want to receive feedback from customers, so that I can improve my services. 
+
+As a business, I want to be able to display and update my menu. So that users can find where my services are offered and also which services I can provide. 
+
+As a business, I want to show my location and show current offers as well as operating times. So that service users know where I can provide the service and during which hours. 
+
+As a van provider, I would want to show/update my location as it may change and users need to know where to find me 
+
+ 
+
+As a business user, I want my online delivery service page to be visible, so that customers don’t always have to travel to my location. 
+
+As both a service user and a service provider I need to be able to register and login. 
+
+As a service provider, I need to register my business and login so that I can update my business details, provide contact info and store my data in the database. 
+
+As a service user, I need to be able to login so that I can leave reviews/ratings of a business, add favourites, re-order recent purchases, receive notifications and store my data in the database. 
