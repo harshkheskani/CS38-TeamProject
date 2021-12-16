@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+{% load static %} 
+
+
+<html>
+
+	<head>
+		
+		{% block base_css %}
+			<link rel="stylesheet" type="text/css" href="{% static 'base.css' %}"/>
+		{% endblock %}
+		
+		<title>
+			Leidos -
+			{% block title_block %}
+				Base
+			{% endblock %}
+		</title>
+
+	</head>
+
+	<body>
+		
+		<nav class="navigation-bar">
+			<img class="logo" src="{% static 'images/logo.png' %}" alt="logo" />
+			<ul>
+				{% if user.is_authenticated %}
+					<li><a href="#">Profile</a></li>
+					<li><a href="#">Log out</a></li>
+				{% else %}
+					<a href="#">Login</a>
+					<a href="#">Register</a>
+				{% endif %}
+			</ul>
+		</nav>
+		
+		<div class = "main">
+			{% block body_block %}
+			THIS IS THE BODY BLOCK
+			{% endblock %}
+		</div>
+		
+	</body>
+	
+	<footer class="footer">
+		<p>© 2021 Team CS38</p>
+	</footer>
+		
+</html>
