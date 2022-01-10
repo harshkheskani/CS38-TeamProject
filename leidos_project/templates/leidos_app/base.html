@@ -28,8 +28,8 @@
 					<li><a href="#">Profile</a></li>
 					<li><a href="#">Log out</a></li>
 				{% else %}
-					<a href="#">Login</a>
-					<a href="#">Register</a>
+					<a href="{% url 'leidos_app:login' %}">Login</a>
+					<a href="{% url 'leidos_app:register' %}">Register</a>
 				{% endif %}
 			</ul>
 		</nav>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+{% extends 'leidos_app/base.html' %}
+{% load static %}
+
+<html>
+
+    <head>
+
+        <title>
+            Leidos - 
+            {% block title_block %}
+                Login
+            {% endblock %}
+        </title>
+
+    </head>
+
+    {% block head_block %}
+        <link rel="stylesheet" href="{% static 'form.css' %}">
+    {% endblock %} 
+
+    {% block body_block %}
+    <div class="form_css">
+        <h1 class="formh1"> Login </h1>
+
+        <form id="login_form" method="post" action="{% url 'leidos_app:login' %}" >
+            {% csrf_token %}
+
+            Username: <input type="text" name="Username" value="" size="50" />
+            <br />
+
+            Password: <input type="password" name="password" value="" size="50" />
+            <br />
+
+            
+            <input type="submit" value="submit" />
+        </form>
+    </div>
+    {% endblock %}
+
+    
+</html>
