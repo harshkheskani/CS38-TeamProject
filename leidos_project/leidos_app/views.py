@@ -1,6 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
-
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
+from leidos_app.forms import *
+from django.contrib import messages
+from django.urls import reverse
 
 # Create your views here.
 def base(request):
@@ -41,7 +45,7 @@ def register(request):
                                                                      'registered': registered})
 
 
-def user_login(request):
+def login(request):
     # If the request is an HTTP POST, try to pull out the relevant information.
     if request.method == 'POST':
         # Gather the username and password provided by the user.
@@ -84,7 +88,7 @@ def user_login(request):
 
 
 @login_required
-def user_logout(request):
+def logout(request):
     # Since we know the user is logged in, we can now just log them out.
     logout(request)
     # Take the user back to the homepage.
