@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from leidos_project.leidos_app.forms import *
+from leidos_app.forms import *
 from django.contrib import messages
 from django.urls import reverse
 
@@ -10,7 +10,7 @@ from django.urls import reverse
 def base(request):
     return render(request, 'leidos_app/base.html')
 
-def register(request):
+def user_register(request):
     registered = False
 
     if request.method == "POST":
@@ -28,8 +28,10 @@ def register(request):
             if 'profile_pic' in request.FILES:
                 profile.profile_pic = request.FILES['profile_pic']
 
+            profile.is_business_owner = request.POST.get("is_business_owner") == "Yes"
 
 
+            print(profile.is_business_owner)
             profile.save()
             registered = True
 
@@ -45,16 +47,10 @@ def register(request):
                                                                      'registered': registered})
 
 
-def login(request):
+def user_login(request):
     # If the request is an HTTP POST, try to pull out the relevant information.
     if request.method == 'POST':
-        # Gather the username and password provided by the user.
-        # This information is obtained from the login form.
-        # We use request.POST.get('<variable>') as opposed
-        # to request.POST['<variable>'], because the
-        # request.POST.get('<variable>') returns None if the
-        # value does not exist, while request.POST['<variable>']
-        # will raise a KeyError exception.
+
         username = request.POST.get('username')
         password = request.POST.get('password')
         # Use Django's machinery to attempt to see if the username/password
@@ -88,7 +84,7 @@ def login(request):
 
 
 @login_required
-def logout(request):
+def user_logout(request):
     # Since we know the user is logged in, we can now just log them out.
     logout(request)
     # Take the user back to the homepage.

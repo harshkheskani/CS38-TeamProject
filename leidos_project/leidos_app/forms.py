@@ -14,8 +14,8 @@ class UserForm(forms.ModelForm):
 
 
 class UserProfileForm(forms.ModelForm):
-    is_business_owner = forms.BooleanField(label="Tick if business owner:")
+    is_business_owner = forms.ChoiceField(choices=[("Yes","Yes"), ("No","No")])
 
     class Meta:
         model = UserProfile
-        fields = ('profile_pic', 'description',)
+        fields = ('profile_pic',)
