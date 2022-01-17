@@ -31,9 +31,10 @@ def user_register(request):
             profile.is_business_owner = request.POST.get("is_business_owner") == "Yes"
 
 
-            print(profile.is_business_owner)
             profile.save()
-            registered = True
+
+            login(request, user)
+            return redirect(reverse("leidos_app:index"))
 
         else:
             print(user_form.errors, profile_form.errors)
@@ -42,9 +43,7 @@ def user_register(request):
         user_form = UserForm()
         profile_form = UserProfileForm()
 
-    return render(request, 'leidos_app/register.html', context={'user_form': user_form,
-                                                                     'profile_form': profile_form,
-                                                                     'registered': registered})
+    return render(request, 'leidos_app/register.html', context={'user_form': user_form, 'profile_form': profile_form})
 
 
 def user_login(request):
