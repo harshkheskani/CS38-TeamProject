@@ -8,5 +8,9 @@ urlpatterns = [
 
 	path('login/', views.login, name='login'),
 	path('register/', views.register, name='register'),
+	path('create_menu/', views.create_menu, name ='create_menu'),
+	path('menu/', views.menu, name="menu"),
+
+
 	
 ]
