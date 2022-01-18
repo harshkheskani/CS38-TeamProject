@@ -45,6 +45,7 @@ def user_register(request):
             profile.save()
 
             login(request, user)
+            messages.success(request, "You have successfully registered!")
             return redirect(reverse("leidos_app:homepage"))
 
         else:
@@ -75,6 +76,7 @@ def user_login(request):
                 # If the account is valid and active, we can log the user in.
                 # We'll send the user back to the homepage.
                 login(request, user)
+                messages.success(request, "You have successfully logged in!")
                 return redirect(reverse('leidos_app:homepage'))
             else:
                 # An inactive account was used - no logging in!
