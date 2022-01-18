@@ -35,9 +35,24 @@
 		</nav>
 		
 		<div class = "main">
+
+		{% if messages %}
+        	{% for message in messages %}
+    			<ul {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+					{% if message.tags == "success" %}
+					<p style="color:green">{{ message }}</p>
+					{% elif message.tags == "error" %}
+					<p style="color:red">{{ message }}</p>
+					{% endif %}
+				</ul>
+
+			{% endfor %}
+			{% endif %}
 			{% block body_block %}
 			THIS IS THE BODY BLOCK
 			{% endblock %}
+
+
 		</div>
 		
 	</body>

@@ -11,7 +11,7 @@ def base(request):
     return render(request, 'leidos_app/base.html')
 
 
-def  homepage(request):
+def homepage(request):
     return render(request, 'leidos_app/homepage.html')
 
 
@@ -39,9 +39,11 @@ def user_register(request):
             profile.save()
 
             login(request, user)
+            messages.success(request, "You have successfully registered!")
             return redirect(reverse("leidos_app:homepage"))
 
         else:
+            messages.error(request, "An error has occurred.")
             print(user_form.errors, profile_form.errors)
 
     else:
@@ -69,6 +71,7 @@ def user_login(request):
                 # If the account is valid and active, we can log the user in.
                 # We'll send the user back to the homepage.
                 login(request, user)
+                messages.success(request, "You have successfully logged in!")
                 return redirect(reverse('leidos_app:homepage'))
             else:
                 # An inactive account was used - no logging in!
