@@ -11,4 +11,8 @@ def login(request):
 
 def register(request):
     return render(request, 'leidos_app/register.html')
+
+def  homepage(request):
+    return render(request, 'leidos_app/homepage.html')
+
     

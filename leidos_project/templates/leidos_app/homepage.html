@@ -1,0 +1,8 @@
+{% extends 'leidos_app/base.html' %}
+{% load static %}
+
+{% block body_block %}
+<center><h1>LEIDOS</h1></center>
+<center><font size="-10">Find a local food place near you</font></center>
+<center><a href="{% url 'leidos_app:homepage' %}">Search!</a></center>
+{% endblock %}
