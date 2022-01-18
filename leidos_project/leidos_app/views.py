@@ -10,6 +10,11 @@ from django.urls import reverse
 def base(request):
     return render(request, 'leidos_app/base.html')
 
+
+def  homepage(request):
+    return render(request, 'leidos_app/homepage.html')
+
+
 def user_register(request):
     registered = False
 
@@ -34,7 +39,7 @@ def user_register(request):
             profile.save()
 
             login(request, user)
-            return redirect(reverse("leidos_app:index"))
+            return redirect(reverse("leidos_app:homepage"))
 
         else:
             print(user_form.errors, profile_form.errors)
@@ -64,7 +69,7 @@ def user_login(request):
                 # If the account is valid and active, we can log the user in.
                 # We'll send the user back to the homepage.
                 login(request, user)
-                return redirect(reverse('leidos_app:index'))
+                return redirect(reverse('leidos_app:homepage'))
             else:
                 # An inactive account was used - no logging in!
                 messages.error(request, "Your Leidos account is disabled")
@@ -87,7 +92,5 @@ def user_logout(request):
     # Since we know the user is logged in, we can now just log them out.
     logout(request)
     # Take the user back to the homepage.
-    return redirect(reverse('leidos_app:index'))
+    return redirect(reverse('leidos_app:homepage'))
 
-
-    
