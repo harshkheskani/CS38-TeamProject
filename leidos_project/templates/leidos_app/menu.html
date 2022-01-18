@@ -1,0 +1,33 @@
+{% extends 'leidos_app/base.html' %} 
+{% load static %} 
+
+{% block title_block %}
+Menu
+{% endblock %}
+
+{% block body_block %}
+    <link rel="stylesheet" href="{% static 'menu.css' %}">
+
+        <div class="alignRow">
+            <div class="imgcolumn">
+                <img src="{% static 'images/roll.jpg' %}" alt="Picture of a Roll" width="100" height="auto" />
+                <p>Roll £2.50 </p>
+            </div>
+
+            <div class="imgcolumn">
+                <img src="{% static 'images/burger.jpg' %}" alt="Picture of a Burger" width="100" height="auto" />
+                <p>Burger £4</p>
+            </div>
+
+            <div class="imgcolumn">
+                <img src="{% static 'images/hotdog.jpg' %}" alt="Picture of a Hot Dog" width="100" height="auto" />
+                <p> Hotdog £3.50 </p>
+            </div>
+            <div class="imgcolumn">
+                <img src="{%static 'images/kebab.jpg' %}" alt="kebab" width="100" height="auto" />
+                <p> Kebab £5 </p>
+                <br />
+            </div>
+        </div>
+    {% endblock %}
+</html>
