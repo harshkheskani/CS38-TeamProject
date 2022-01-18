@@ -16,24 +16,13 @@
 {% block body_block %}
     <div class="form.css">
         <h1 class="form.h1">Register here!</h1>
-        {%if registered %}
-        <strong>Thank your for registering!</strong><br />
-        {% endif %}
         <form id="user_form" method="post" action="{% url 'leidos_app:register' %}">
             {% csrf_token %}
 
-            Username: <input type="text" name="Username" value="" size="50" />
-            <br />
+            {{ user_form.as_p }}
+            {{ profile_form.as_p }}
 
-            Email: <input type="email" name="email" value="" size="50" />
-            <br />
-
-            Password: <input type="password" name="password" value="" size="50" />
-            <br />
-
-            <input type="submit" value="submit" />
-
-
+            <input type="submit" value="Submit" />
         </form>
     </div>
 {% endblock %}
