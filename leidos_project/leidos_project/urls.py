@@ -20,7 +20,7 @@ from leidos_app import views
 
 
 urlpatterns = [
-    path('', views.base, name='base'),
+    path('', views.homepage, name='homepage'),
     path('leidos_app', include('leidos_app.urls')),
     path('admin/', admin.site.urls),
 ]
