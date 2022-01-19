@@ -102,3 +102,5 @@ def user_logout(request):
     # Take the user back to the homepage.
     return redirect(reverse('leidos_app:homepage'))
 
+def  business(request):
+    return render(request, 'leidos_app/business.html')
