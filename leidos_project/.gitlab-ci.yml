@@ -1,18 +1,32 @@
-# This file is a template, and might need editing before it works on your project.
-# To contribute improvements to CI/CD templates, please follow the Development guide at:
-# https://docs.gitlab.com/ee/development/cicd/templates.html
-# This specific template is located at:
-# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Pages/HTML.gitlab-ci.yml
+stages:
+  - test
+  - deploy
 
-# Full project: https://gitlab.com/pages/plain-html
-pages:
-  stage: deploy
+Test:
+  image: python:3.8.3
+  stage: test
+  before_script:
+    - pip install -r requirements.txt
+    - python manage.py migrate
+    - python manage.py collectstatic --no-input
+  when: on_success
   script:
-    - mkdir .public
-    - cp -r * .public
-    - mv .public public
+    - coverage run --include="./*/*" --omit="./manage.py" manage.py test
+    - coverage report -m
+    - coverage xml -i
   artifacts:
     paths:
-      - public
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      - coverage.xml
+
+Deployment:
+  image: ruby:latest
+  stage: deploy
+  before_script:
+    - gem install dpl
+  script:
+    - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_API_KEY
+  environment:
+    name: main
+    url: $HEROKU_APP_HOST
+  only:
+    - main
