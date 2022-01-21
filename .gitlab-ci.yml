@@ -14,7 +14,6 @@ Test:
   tags:
     - docker
   script:
-    - coverage3 run --include="./*/*" --omit="./manage.py" manage.py test
     - coverage report -m
     - coverage xml -i
   artifacts:
