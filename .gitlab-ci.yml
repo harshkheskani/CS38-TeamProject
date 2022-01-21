@@ -14,8 +14,7 @@ Test:
   tags:
     - docker
   script:
-    - cd leidos_project
-    - coverage run --include="./*/*" --omit="./manage.py" manage.py test
+    - coverage3 run --include="./*/*" --omit="./manage.py" manage.py test
     - coverage report -m
     - coverage xml -i
   artifacts:
