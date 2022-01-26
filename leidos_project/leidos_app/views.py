@@ -102,5 +102,79 @@ def user_logout(request):
     # Take the user back to the homepage.
     return redirect(reverse('leidos_app:homepage'))
 
-def  business(request):
-    return render(request, 'leidos_app/business.html')
+
+def create_item(request, business_name_slug):
+
+    if request.method == 'GET':
+        tuples = []
+        for section in MenuSection.objects.get(business_fk=Business.objects.get(slug=business_name_slug)):
+            tuples.append((section, section.name))
+
+        form = forms.AddItemForm(choices=tuples)
+        print(form)
+        return render(request, "leidos_app/create_menu.html", {"form":form})
+
+    if request.method == 'POST':
+        form = AddItemForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            return redirect(reverse("leidos_app:business", kwargs={"business_name_slug":business_name_slug}))
+
+
+def business(request, business_name_slug):
+
+    if request.method == 'GET':
+        # Retrieve all relevant information for business
+        context_dict = get_business_info(business_name_slug)
+
+        if context_dict is not None:
+
+            context_dict["is_business_owner"] = request.user.is_autheticated and\
+                                                request.user == context_dict["business"].user
+
+            return render(request, "leidos_app/business.html", context_dict)
+        else:
+            messages.error(request, f"Business {business_name_slug} does not exists")
+            return redirect(reverse('leidos_app:homepage'))
+
+    else:
+        messages.error(request, f"business.view() only accepts 'GET' requests, got {request.method} instead")
+        return redirect(reverse('leidos_app:homepage'))
+
+
+def get_business_info(business_slug):
+
+    business = Business.objects.get(slug=business_slug)
+
+    if business is not None:
+        context_dict = {}
+        context_dict["business"] = business
+
+        menu_sections = MenuSection.objects.filter(business_fk=business)
+
+        if menu_sections is not None:
+
+            sections_list = []
+
+            for menu_section in menu_sections:
+                section_items = SectionItems.objects.filter(section_fk=menu_section)
+                sections_list.append([menu_section] + section_items)
+
+            context_dict["sections"] = sections_list    # [[section, sec_items, ...], ... ]
+        else:
+            context_dict["sections"] = None
+
+
+        opening_times = OpeningTimes.objects.filter(business_fk=business)
+
+        if opening_times is not None:
+            context_dict["opening_times"] = opening_times
+        else:
+            context_dict["opening_times"] = None
+
+        return context_dict
+
+    else:
+        return None

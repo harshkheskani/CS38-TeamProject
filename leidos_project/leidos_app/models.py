@@ -36,6 +36,17 @@ class Business(models.Model):
         return f"{self.name} owned by {UserProfile.objects.get(pk=self.owner_fk).username}"
 
 
+class OpeningTimes(models.Model):
+
+    business_fk = models.ForeignKey(Business, on_delete=models.CASCADE)
+
+    day = models.CharField(max_length=15)
+    time = models.CharField(max_length=25)
+
+    def __str__(self):
+        return f"Opened on {self.day} from-to f{self.time}"
+
+
 class MenuSection(models.Model):
 
     business_fk = models.ForeignKey(Business, on_delete=models.CASCADE)
