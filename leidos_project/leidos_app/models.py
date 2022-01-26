@@ -44,7 +44,7 @@ class OpeningTimes(models.Model):
     time = models.CharField(max_length=25)
 
     def __str__(self):
-        return f"Opened on {self.day} from-to f{self.time}"
+        return f"Opened on {self.day} from-to {self.time}"
 
 
 class MenuSection(models.Model):

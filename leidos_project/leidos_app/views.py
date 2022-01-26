@@ -103,11 +103,11 @@ def user_logout(request):
     return redirect(reverse('leidos_app:homepage'))
 
 
-def create_item(request, business_name_slug):
-
+def create_menu(request, business_name_slug):
+    print("inside create_item view")
     if request.method == 'GET':
         tuples = []
-        for section in MenuSection.objects.get(business_fk=Business.objects.get(slug=business_name_slug)):
+        for section in MenuSection.objects.filter(business_fk=Business.objects.get(slug=business_name_slug)):
             tuples.append((section, section.name))
 
         form = forms.AddItemForm(choices=tuples)
@@ -146,15 +146,14 @@ def business(request, business_name_slug):
 
 def get_business_info(business_slug):
 
-    business = Business.objects.get(slug=business_slug)
+    try:
+        business = Business.objects.get(slug=business_slug)
 
-    if business is not None:
         context_dict = {}
         context_dict["business"] = business
 
-        menu_sections = MenuSection.objects.filter(business_fk=business)
-
-        if menu_sections is not None:
+        try:
+            menu_sections = MenuSection.objects.filter(business_fk=business)
 
             sections_list = []
 
@@ -163,18 +162,18 @@ def get_business_info(business_slug):
                 sections_list.append([menu_section] + section_items)
 
             context_dict["sections"] = sections_list    # [[section, sec_items, ...], ... ]
-        else:
+        except MenuSection.DoesNotExist:
             context_dict["sections"] = None
 
 
-        opening_times = OpeningTimes.objects.filter(business_fk=business)
-
-        if opening_times is not None:
+        try:
+            opening_times = OpeningTimes.objects.filter(business_fk=business)
             context_dict["opening_times"] = opening_times
-        else:
+
+        except OpeningTimes.DoesNotExist:
             context_dict["opening_times"] = None
 
         return context_dict
 
-    else:
+    except Business.DoesNotExist:
         return None
