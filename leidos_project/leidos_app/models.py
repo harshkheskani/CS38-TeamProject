@@ -52,7 +52,6 @@ class SectionItem(models.Model):
 
     section_fk = models.ForeignKey(MenuSection, on_delete=models.CASCADE)
 
-    #category = models.Choices(value=choices)
     name = models.CharField(max_length=128)
     description = models.TextField(max_length=128, default="")
     price = models.IntegerField()
