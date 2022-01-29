@@ -103,23 +103,49 @@ def user_logout(request):
     return redirect(reverse('leidos_app:homepage'))
 
 
-def create_menu(request, business_name_slug):
-    print("inside create_item view")
+@login_required
+def create_section_item(request, business_name_slug):
+
+    if not business_exists(business_name_slug):
+        messages.error(request, f"Business {business_name_slug} does not exists")
+        return redirect('leidos_app:homepage')
+
+    if request.user != Business.objects.get(slug=business_name_slug).owner_fk:
+        messages.error(request, "You do not have access to this option")
+        return redirect(reverse('leidos_app:business', kwargs={"business_name_slug":business_name_slug}))
+
     if request.method == 'GET':
         tuples = []
-        for section in MenuSection.objects.filter(business_fk=Business.objects.get(slug=business_name_slug)):
-            tuples.append((section, section.name))
+        try:
+            sections = MenuSection.objects.filter(business_fk=Business.objects.get(slug=business_name_slug))
+            if len(sections) == 0: raise Exception
 
-        form = forms.AddItemForm(choices=tuples)
-        print(form)
-        return render(request, "leidos_app/create_menu.html", {"form":form})
+            for section in sections:
+                tuples.append((section, section.name))
+
+            form = forms.AddItemForm(choices=tuples)
+            print(form)
+            return render(request, "leidos_app/create_menu.html", {"form":form})
+        except:
+            messages.error(request, "FATAL_ERROR:: Item creation attempted without pre-existing Section")
+            return redirect("leidos_app:homepage")
+
 
     if request.method == 'POST':
         form = AddItemForm(request.POST)
 
         if form.is_valid():
-            form.save()
+            section_item = form.save(commit=False)
 
+            if "img" in request.FILES:
+                section_item.img = request.FILES["img"]
+
+            section_item.save()
+
+            return redirect(reverse("leidos_app:business", kwargs={"business_name_slug":business_name_slug}))
+        else:
+            print(form.errors)
+            messages.error(request, form.errors)
             return redirect(reverse("leidos_app:business", kwargs={"business_name_slug":business_name_slug}))
 
 
@@ -132,7 +158,7 @@ def business(request, business_name_slug):
         if context_dict is not None:
 
             context_dict["is_business_owner"] = request.user.is_autheticated and\
-                                                request.user == context_dict["business"].user
+                                                request.user == context_dict["business"].owner_fk
 
             return render(request, "leidos_app/business.html", context_dict)
         else:
@@ -177,3 +203,11 @@ def get_business_info(business_slug):
 
     except Business.DoesNotExist:
         return None
+
+
+def business_exists(business_name_slug):
+    try:
+        Business.objects.get(slug=business_name_slug)
+        return True
+    except:
+        return False
