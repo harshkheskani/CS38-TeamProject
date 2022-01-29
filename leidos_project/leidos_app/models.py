@@ -1,3 +1,5 @@
+from random import choices
+from unicodedata import category
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 from django.db import models
@@ -50,11 +52,11 @@ class SectionItem(models.Model):
 
     section_fk = models.ForeignKey(MenuSection, on_delete=models.CASCADE)
 
+    #category = models.Choices(value=choices)
     name = models.CharField(max_length=128)
     description = models.TextField(max_length=128, default="")
     price = models.IntegerField()
     img = models.ImageField(upload_to="item_images", blank=True)
-
 
 class Comment(models.Model):
 

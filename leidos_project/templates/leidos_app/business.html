@@ -14,12 +14,15 @@
 		<span class="">
 			<img src="{% static 'images/banner.jpg' %}" alt="Banner">
 			<div class="business-name">
-			<h1>Bob's Burgers<h1>
-			<h4>American, Burgers, Vegetarian, Allergy-Friendly<h4>
+			<h1>Bob's Burgers</h1>
+			<h4>American, Burgers, Vegetarian, Allergy-Friendly</h4>
+			{% if is_business_owner %}
+			<a href="{% url 'leidos_app:create_menu' %}"  >Edit menu</a>
+			{% endif %}
 			</div>
 			<h3><p style="text-align:left;">Hillhead St, G12 8QE
 			<span style="float:right;">Open : 11am - 8pm</span></h3>
-    </p>
+   			 </p>
 		</span>
 		
 	</div>
