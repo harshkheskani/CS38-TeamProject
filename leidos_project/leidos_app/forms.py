@@ -19,3 +19,18 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('profile_pic',)
+
+
+class AddItemForm(forms.ModelForm):
+    def __init__(self, choices, *args, **kwargs):
+        super(AddItemForm, self).__init__(*args, **kwargs)
+        category = forms.ChoiceField(choices = choices) 
+    class Meta:
+        model = SectionItem
+        fields = ('name', 'description', 'price', 'img') 
+        
+
+
+
+
+
