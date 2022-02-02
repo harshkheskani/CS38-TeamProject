@@ -22,12 +22,18 @@ class UserProfileForm(forms.ModelForm):
 
 
 class AddItemForm(forms.ModelForm):
-    def __init__(self, choices, *args, **kwargs):
+
+
+    def __init__(self, *args, **kwargs):
+
+        choices = kwargs.pop("choices")
         super(AddItemForm, self).__init__(*args, **kwargs)
-        category = forms.ChoiceField(choices = choices) 
+        self.fields["sections"] = forms.ChoiceField(choices=choices)
+
     class Meta:
         model = SectionItem
-        fields = ('name', 'description', 'price', 'img') 
+        fields = ('name', 'description', 'price', 'img')
+        exclude = ('section_fk',)
         
 
 

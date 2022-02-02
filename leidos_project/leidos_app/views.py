@@ -136,6 +136,7 @@ def create_section_item(request, business_name_slug):
 
         if form.is_valid():
             section_item = form.save(commit=False)
+            section_item.section_fk = request.get["section"]
 
             if "img" in request.FILES:
                 section_item.img = request.FILES["img"]
