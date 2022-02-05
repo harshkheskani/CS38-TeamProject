@@ -4,6 +4,18 @@ from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 from django.db import models
 
+HOUR_OF_DAY_24 = [(str(i) + j,str(i) + j) for j in ["AM","PM"] for i in range(1,13)]
+
+WEEKDAYS = [
+  ("Monday", "Monday"),
+  ("Tuesday", "Tuesday"),
+  ("Wednesday", "Wednesday"),
+  ("Thursday", "Thursday"),
+  ("Friday", "Friday"),
+  ("Saturday", "Saturday"),
+  ("Sunday", "Sunday"),
+]
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -38,15 +50,12 @@ class Business(models.Model):
         return f"{self.name} owned by {UserProfile.objects.get(pk=self.owner_fk).username}"
 
 
-class OpeningTimes(models.Model):
-
+class OpeningHours(models.Model):
     business_fk = models.ForeignKey(Business, on_delete=models.CASCADE)
-
-    day = models.CharField(max_length=15)
-    time = models.CharField(max_length=25)
-
-    def __str__(self):
-        return f"Opened on {self.day} from-to {self.time}"
+    weekday_from = models.PositiveSmallIntegerField(choices=WEEKDAYS, unique=True)
+    weekday_to = models.PositiveSmallIntegerField(choices=WEEKDAYS, blank=True)
+    from_hour = models.CharField(max_length=5, choices=HOUR_OF_DAY_24)
+    to_hour = models.CharField(max_length=5, choices=HOUR_OF_DAY_24)
 
 
 class MenuSection(models.Model):

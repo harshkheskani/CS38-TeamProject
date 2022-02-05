@@ -36,7 +36,9 @@ class AddItemForm(forms.ModelForm):
         exclude = ('section_fk',)
         
 
+class AddOpeningTimesForm(forms.ModelForm):
 
-
-
+    class Meta:
+        model = OpeningHours
+        exclude = ('business_fk',)
 

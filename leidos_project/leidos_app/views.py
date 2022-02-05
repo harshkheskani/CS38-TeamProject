@@ -12,12 +12,12 @@ def base(request):
 
 
 def create_menu(request):
-    return render(request, 'leidos_app/create_menu.html')  
+    return render(request, 'leidos_app/create_menu.html', {"form":AddOpeningTimesForm()})
 
 def menu(request):
     return render(request, 'leidos_app/menu.html')  
 
-def  homepage(request):
+def homepage(request):
     return render(request, 'leidos_app/homepage.html')
 
 
@@ -170,7 +170,38 @@ def business(request, business_name_slug):
         messages.error(request, f"business.view() only accepts 'GET' requests, got {request.method} instead")
         return redirect(reverse('leidos_app:homepage'))
 
+@login_required
+def add_opening_hours(request, business_name_slug):
 
+    if not business_exists(business_name_slug):
+        messages.error(request, f"Business {business_name_slug} does not exists")
+        return redirect('leidos_app:homepage')
+
+    if request.user != Business.objects.get(slug=business_name_slug).owner_fk:
+        messages.error(request, "You do not have access to this option")
+        return redirect(reverse('leidos_app:business', kwargs={"business_name_slug":business_name_slug}))
+
+
+    if request.method == 'GET':
+        form = AddOpeningTimesForm()
+        existing_hours = OpeningHours.objects.filter(business_fk = Business.objects.get(slug=business_name_slug))
+
+        return render(request, "leidos_app/add_opening_times.html",{"form":form, "existing_hours":existing_hours})
+
+    elif request.method == 'POST':
+        form = AddOpeningTimesForm(request.POST)
+
+        opening_hours_form = form.save(commit=False)
+        opening_hours_form.business_fk = Business.objects.get(slug=business_name_slug)
+        opening_hours_form.save()
+
+        messages.success(request, "New opening time successfully added")
+
+        return redirect(reverse('leidos_app:business', kwargs={"business_name_slug": business_name_slug}))
+
+
+
+# UTILS #
 def get_business_info(business_slug):
 
     try:
