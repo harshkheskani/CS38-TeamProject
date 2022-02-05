@@ -158,8 +158,13 @@ def business(request, business_name_slug):
 
         if context_dict is not None:
 
-            context_dict["is_business_owner"] = request.user.is_autheticated and\
-                                                request.user == context_dict["business"].owner_fk
+            if request.user.is_autheticated:
+                context_dict["is_business_owner"] = request.user == context_dict["business"].owner_fk
+
+                context_dict["is_favorite"] = len(Favorite.objects.filter(user_fk=request.user,
+                                                                                business_fk=Business.objects.get(slug=business_name_slug))) != 0
+            else:
+                context_dict["is_business_owner"], context_dict["is_favorite"] = False, False
 
             return render(request, "leidos_app/business.html", context_dict)
         else:
@@ -199,7 +204,35 @@ def add_opening_hours(request, business_name_slug):
 
         return redirect(reverse('leidos_app:business', kwargs={"business_name_slug": business_name_slug}))
 
+@login_required
+def add_favorite(request, business_name_slug):
 
+    if not business_exists(business_name_slug):
+        messages.error(request, f"Business {business_name_slug} does not exists")
+        return redirect('leidos_app:homepage')
+
+    try:
+        Favorite.objects.get(user_fk=request.user,business_fk=Business.objects.get(slug=business_name_slug))
+
+    except Favorite.DoesNotExist: # I.e. user does not have this specific business in favorites already
+        fav_obj = Favorite(user_fk = request.user, business_fk=Business.objects.get(slug=business_name_slug))
+        fav_obj.save()
+
+    return redirect(reverse("leidos_app:business",kwargs={"business_name_slug":business_name_slug}))
+
+def remove_favorite(request, business_name_slug):
+
+    if not business_exists(business_name_slug):
+        messages.error(request, f"Business {business_name_slug} does not exists")
+        return redirect('leidos_app:homepage')
+
+    try:
+        fav_obj = Favorite.objects.get(user_fk=request.user,business_fk=Business.objects.get(slug=business_name_slug))
+        fav_obj.delete()
+    except Favorite.DoesNotExist:
+        return HttpResponse("Attempted to remove favorite without pre-existing object")
+
+    return redirect(reverse("leidos_app:business", kwargs={"business_name_slug":business_name_slug}))
 
 # UTILS #
 def get_business_info(business_slug):
