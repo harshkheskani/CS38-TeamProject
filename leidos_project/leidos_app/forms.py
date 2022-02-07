@@ -19,3 +19,26 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('profile_pic',)
+
+
+class AddItemForm(forms.ModelForm):
+
+
+    def __init__(self, *args, **kwargs):
+
+        choices = kwargs.pop("choices")
+        super(AddItemForm, self).__init__(*args, **kwargs)
+        self.fields["sections"] = forms.ChoiceField(choices=choices)
+
+    class Meta:
+        model = SectionItem
+        fields = ('name', 'description', 'price', 'img')
+        exclude = ('section_fk',)
+        
+
+class AddOpeningTimesForm(forms.ModelForm):
+
+    class Meta:
+        model = OpeningHours
+        exclude = ('business_fk',)
+

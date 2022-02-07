@@ -6,7 +6,7 @@ from leidos_app.views import *
 
 class TestUrls(TestCase):
 
-    def test_index_url_is_resolved(self):
+    def test_homepage_url_is_resolved(self):
         url = reverse('homepage')
         self.assertEquals(resolve(url).func, homepage)
 
@@ -22,6 +22,14 @@ class TestUrls(TestCase):
         url = reverse('leidos_app:logout')
         self.assertEquals(resolve(url).func, user_logout)
 
-    def test_movie_url_is_resolved(self):
-        url = reverse('leidos_app:business')
+    def test_business_url_is_resolved(self):
+        url = reverse('leidos_app:business', args=["slug"])
         self.assertEquals(resolve(url).func, business)
+
+    def test_opening_hours_url_is_resolved(self):
+        url = reverse('leidos_app:add_hours', args=["slug"])
+        self.assertEquals(resolve(url).func, add_opening_hours)
+
+    def test_create_menu_url_is_resolved(self):
+        url = reverse('leidos_app:create_menu')
+        self.assertEquals(resolve(url).func, create_menu)
