@@ -12,12 +12,12 @@ def base(request):
 
 
 def create_menu(request):
-    return render(request, 'leidos_app/create_menu.html')  
+    return render(request, 'leidos_app/create_menu.html', {"form":AddOpeningTimesForm()})
 
 def menu(request):
     return render(request, 'leidos_app/menu.html')  
 
-def  homepage(request):
+def homepage(request):
     return render(request, 'leidos_app/homepage.html')
 
 
@@ -102,5 +102,149 @@ def user_logout(request):
     # Take the user back to the homepage.
     return redirect(reverse('leidos_app:homepage'))
 
-def  business(request):
-    return render(request, 'leidos_app/business.html')
+
+@login_required
+def create_section_item(request, business_name_slug):
+
+    if not business_exists(business_name_slug):
+        messages.error(request, f"Business {business_name_slug} does not exists")
+        return redirect('leidos_app:homepage')
+
+    if request.user != Business.objects.get(slug=business_name_slug).owner_fk:
+        messages.error(request, "You do not have access to this option")
+        return redirect(reverse('leidos_app:business', kwargs={"business_name_slug":business_name_slug}))
+
+    if request.method == 'GET':
+        tuples = []
+        try:
+            sections = MenuSection.objects.filter(business_fk=Business.objects.get(slug=business_name_slug))
+            if len(sections) == 0: raise Exception
+
+            for section in sections:
+                tuples.append((section, section.name))
+
+            form = forms.AddItemForm(choices=tuples)
+            print(form)
+            return render(request, "leidos_app/create_menu.html", {"form":form})
+        except:
+            messages.error(request, "FATAL_ERROR:: Item creation attempted without pre-existing Section")
+            return redirect("leidos_app:homepage")
+
+
+    if request.method == 'POST':
+        form = AddItemForm(request.POST)
+
+        if form.is_valid():
+            section_item = form.save(commit=False)
+            section_item.section_fk = request.get["section"]
+
+            if "img" in request.FILES:
+                section_item.img = request.FILES["img"]
+
+            section_item.save()
+
+            return redirect(reverse("leidos_app:business", kwargs={"business_name_slug":business_name_slug}))
+        else:
+            print(form.errors)
+            messages.error(request, form.errors)
+            return redirect(reverse("leidos_app:business", kwargs={"business_name_slug":business_name_slug}))
+
+
+def business(request, business_name_slug):
+
+    if request.method == 'GET':
+        # Retrieve all relevant information for business
+        context_dict = get_business_info(business_name_slug)
+
+        if context_dict is not None:
+
+            context_dict["is_business_owner"] = request.user == context_dict["business"].owner_fk
+
+            return render(request, "leidos_app/business.html", context_dict)
+        else:
+            messages.error(request, f"Business {business_name_slug} does not exists")
+            return redirect(reverse('leidos_app:homepage'))
+
+    else:
+        messages.error(request, f"business.view() only accepts 'GET' requests, got {request.method} instead")
+        return redirect(reverse('leidos_app:homepage'))
+
+@login_required
+def edit_business(request, business_name_slug):
+    messages.success("edit business info button working")
+    return redirect(reverse("leidos_app:business", kwargs={"business_name_slug":business_name_slug}))
+
+@login_required
+def add_opening_hours(request, business_name_slug):
+
+    if not business_exists(business_name_slug):
+        messages.error(request, f"Business {business_name_slug} does not exists")
+        return redirect('leidos_app:homepage')
+
+    if request.user != Business.objects.get(slug=business_name_slug).owner_fk:
+        messages.error(request, "You do not have access to this option")
+        return redirect(reverse('leidos_app:business', kwargs={"business_name_slug":business_name_slug}))
+
+
+    if request.method == 'GET':
+        form = AddOpeningTimesForm()
+        existing_hours = OpeningHours.objects.filter(business_fk = Business.objects.get(slug=business_name_slug))
+
+        return render(request, "leidos_app/add_opening_times.html",{"form":form, "existing_hours":existing_hours})
+
+    elif request.method == 'POST':
+        form = AddOpeningTimesForm(request.POST)
+
+        opening_hours_form = form.save(commit=False)
+        opening_hours_form.business_fk = Business.objects.get(slug=business_name_slug)
+        opening_hours_form.save()
+
+        messages.success(request, "New opening time successfully added")
+
+        return redirect(reverse('leidos_app:business', kwargs={"business_name_slug": business_name_slug}))
+
+
+
+# UTILS #
+def get_business_info(business_slug):
+
+    try:
+        business = Business.objects.get(slug=business_slug)
+
+        context_dict = {}
+        context_dict["business"] = business
+
+        if MenuSection.objects.filter(business_fk=business).exists():
+
+            menu_sections = MenuSection.objects.filter(business_fk=business)
+
+            sections_list = []
+
+            for menu_section in menu_sections:
+                section_items = SectionItem.objects.filter(section_fk=menu_section)
+                sections_list.append((menu_section,section_items))
+
+            context_dict["sections"] = sections_list    # [ (section, QuerySet<item....>),.... ]
+        else:
+            context_dict["sections"] = None
+
+
+        if OpeningHours.objects.filter(business_fk=business).exists():
+            opening_hours = OpeningHours.objects.filter(business_fk=business)
+            context_dict["opening_hours"] = opening_hours
+
+        else:
+            context_dict["opening_hours"] = None
+
+        return context_dict
+
+    except Business.DoesNotExist:
+        return None
+
+
+def business_exists(business_name_slug):
+    try:
+        Business.objects.get(slug=business_name_slug)
+        return True
+    except:
+        return False

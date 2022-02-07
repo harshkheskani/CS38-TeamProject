@@ -8,39 +8,59 @@
 
     {% block body_block %}
     <link rel="stylesheet" href="{% static 'menu.css' %}">
-
-
-         <div class="alignRow">
-            <div class="imgcolumn">
-                <img src="{% static 'images/roll.jpg' %}" alt="Picture of a Roll" width="100" height="auto" />
-                <p>Roll £2.50 </p>
-            </div>
-
-            <div class="imgcolumn">
-                <img src="{% static 'images/burger.jpg' %}" alt="Picture of a Burger" width="100" height="auto" />
-                <p>Burger £4</p>
-            </div>
-
-            <div class="imgcolumn">
-                <img src="{% static 'images/hotdog.jpg' %}" alt="Picture of a Hot Dog" width="100" height="auto" />
-                <p> Hotdog £3.50 </p>
-            </div>
-        </div>
     
         <div class="menu.css">
             <br />
-            <h1 class="menu.h1"> Add new Item </h1>
+            <h1 class="menu.h1"> Add new item: </h1>
+            <br />
+            <form id="form" method="post" action="{% url 'leidos_app:create_menu' %}">
+               {% csrf_token %}
+
+               {{ form.as_p }}
+
+               <input type="submit" value="Add" />
+            </form>
+        </div>
+        <br />
+        <div class="menu.css">
+            <br />
+            <h1 class="menu.h1">Edit opening times:</h1>
             <br />
             <form id="menu_form" method="post" action="{% url 'leidos_app:create_menu' %}">
-                
-                Item Name: <input type="text" name="Item" value="" size="50">
+                Monday: 
                 <br />
-
-                Item Image: <input type="text" name="Item" value="" size="50">
+                Open:<input type="time" name="Mon Open" value="" size="25">
+                Close:<input type="time" name="Mon Close" value="" size="25">
                 <br />
-
-                Price of Item: <input type="text" name="Item" value="" size="50">
+                Tuesday: 
                 <br />
+                Open:<input type="time" name="Tue Open" value="" size="25">
+                Close:<input type="time" name="Tue Close" value="" size="25">
+                <br />
+                Wednesday: 
+                <br />
+                Open:<input type="time" name="Wed Open" value="" size="25">
+                Close:<input type="time" name="Wed Close" value="" size="25">
+                <br />
+                Thursday: 
+                <br />
+                Open:<input type="time" name="Thu Open" value="" size="25">
+                Close:<input type="time" name="Thu Close" value="" size="25">
+                <br />
+                Friday: 
+                <br />
+                Open:<input type="time" name="Fri Open" value="" size="25">
+                Close:<input type="time" name="Fri Close" value="" size="25">
+                <br />
+                Saturday: 
+                <br />
+                Open:<input type="time" name="Sat Open" value="" size="25">
+                Close:<input type="time" name="Sat Close" value="" size="25">
+                <br />
+                Sunday: 
+                <br />
+                Open:<input type="time" name="Sun Open" value="" size="25">
+                Close:<input type="time" name="Sun Close" value="" size="25">
             </form>
             <form method="post" action="{% url 'leidos_app:menu' %}">
                 {% csrf_token %}
