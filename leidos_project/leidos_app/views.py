@@ -203,7 +203,34 @@ def add_opening_hours(request, business_name_slug):
 
         return redirect(reverse('leidos_app:business', kwargs={"business_name_slug": business_name_slug}))
 
+@login_required
+def register_business(request):
 
+    if not UserProfile.objects.get(user=request.user).is_business_owner:
+        messages.error(request, "You do not have access to this feature")
+        return redirect(reverse("leidos_app:homepage"))
+
+    if request.method == 'GET':
+        return render(request, "leidos_app/register_business.html", {"form":RegisterBusinessForm()})
+
+    if request.method == 'POST':
+        form = RegisterBusinessForm(request.POST)
+
+        if form.is_valid():
+            business_obj = form.save(commit=False)
+
+            print(f"files:{request.FILES}")
+
+            if 'img' in request.FILES:
+                business_obj.img = request.FILES['img']
+
+            business_obj.owner_fk = request.user
+
+            business_obj.save()
+
+            return redirect(reverse("leidos_app:business", kwargs={"business_name_slug": business_obj.slug}))
+        else:
+            return HttpResponse(form.erros)
 
 # UTILS #
 def get_business_info(business_slug):
