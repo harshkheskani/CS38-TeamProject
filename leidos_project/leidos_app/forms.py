@@ -42,3 +42,11 @@ class AddOpeningTimesForm(forms.ModelForm):
         model = OpeningHours
         exclude = ('business_fk',)
 
+
+class RegisterBusinessForm(forms.ModelForm):
+
+    slug = forms.SlugField(widget=forms.HiddenInput(), required=False)
+
+    class Meta:
+        model = Business
+        exclude = ('owner_fk',)

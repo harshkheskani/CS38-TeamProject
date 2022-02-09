@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from django.urls import resolve
 from django.urls import reverse
 from leidos_app.views import *
+from leidos_app.forms import *
 
 
 test_address = "93 Douglas Street, Glasgow, Scotland"
@@ -48,3 +49,52 @@ class TestBusinessTemplate(TestCase):
         self.assertContains(response, "test_section")                           # Section Name
         self.assertContains(response, "test_item")                              # Item Name
         self.assertContains(response, 10)                                       # Item Price
+
+class TestRegisterBusinessTemplate(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.register_business_url = reverse("leidos_app:register_business")
+
+        user1 = User.objects.create_user(username="test_profile_1")
+        user1.set_password("test_profile")
+        user1.save()
+
+        user2 = User.objects.create_user(username="test_profile_2")
+        user2.set_password("test_profile")
+        user2.save()
+
+        self.business_owner = UserProfile.objects.create(user=user1, is_business_owner=True)
+        self.non_business_owner = UserProfile.objects.create(user=user2, is_business_owner=False)
+
+
+    def test_register_business_template_displays_correct_data(self):
+
+        # Login business owner client
+        self.client.login(username="test_profile_1", password="test_profile")
+        response1 = self.client.get(self.register_business_url)
+
+        # Check if page loads with status code 200
+        self.assertEquals(response1.status_code, 200)
+
+        # Check response1 for correctness
+        self.assertContains(response1, "Name")
+        self.assertContains(response1, "Address")
+        self.assertContains(response1, "Img")
+        self.assertContains(response1, "Description")
+        self.assertNotContains(response1, "Owner_fk")
+        self.assertNotContains(response1, "Slug")
+
+        self.client.logout() # Logout business owning client
+
+        # Login non-business owner client
+        self.client.login(username="test_profile_2", password="test_profile")
+        response2 = self.client.get(self.register_business_url)
+
+        # Check if page loads with status code 302 (redirect)
+        self.assertEquals(response2.status_code, 302)
+
+        # Check response2 for correctness
+        self.assertRedirects(response2, "/leidos_app/homepage/") # Non-business owner should be redirected to homepage
+
+        # TODO figure out how to check for redirected content
