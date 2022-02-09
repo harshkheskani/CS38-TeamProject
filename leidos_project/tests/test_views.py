@@ -72,3 +72,52 @@ class TestBusinessView(TestCase):
         self.assertEquals(response.context['sections'][0][1][0].price, 10)
 
 
+class TestRegisterView(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.register_business_url = reverse("leidos_app:register_business")
+
+        user = User.objects.create_user(username="test_profile")
+        user.set_password("test_profile")
+        user.save()
+
+        self.profile = UserProfile.objects.create(user=user, is_business_owner=True)
+        self.profile.save()
+
+
+    def test_register_business_GET_uses_correct_template(self):
+        self.client.login(username="test_profile", password="test_profile")
+
+        response = self.client.get(self.register_business_url)
+
+        # Check if page loads with status code 200
+        self.assertEquals(response.status_code, 200)
+
+        # Check if correct template is used
+        self.assertTemplateUsed(response, "leidos_app/register_business.html")
+
+    def test_register_business_POST_registers_business(self):
+
+        context_dict = {}
+
+        context_dict["name"] = "test_name"
+        context_dict["address"] = "test_address"
+        context_dict["description"] = "test_desc"
+
+
+        self.client.login(username="test_profile", password="test_profile")
+
+        response = self.client.post(self.register_business_url, context_dict, follow=True)
+
+        self.assertEquals(response.status_code, 200) # redirect to new business page
+
+        # Check business exists
+        self.assertTrue(Business.objects.filter(owner_fk=self.profile.user).exists())
+
+        # Check new page contains correct data
+        self.assertIsInstance(response.context["business"], Business)
+        self.assertEquals(response.context["business"].name, "test_name")
+        self.assertEquals(response.context["business"].address, "test_address")
+        self.assertEquals(response.context["business"].description, "test_desc")
+        self.assertFalse(response.context["business"].img) # Check for no image

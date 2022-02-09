@@ -1,0 +1,29 @@
+{% extends 'leidos_app/base.html' %}
+{% load static %}
+
+{% block title_block %}
+Register Your Business
+{% endblock %}
+
+{% block head_block %}
+        <link rel="stylesheet" href="{% static 'form.css' %}">
+{% endblock %}
+
+{% block body_block %}
+
+     <div class="form.css">
+        <h1 class="form.h1">Register Business Here!</h1>
+       <form
+			id="form"
+			method="post"
+			action="{% url 'leidos_app:register_business' %}"
+			enctype="multipart/form-data"
+			class="auto-form">
+				{% csrf_token %}
+				{{ form.as_p }}
+
+				<button type="submit">REGISTER</button>
+        </form>
+    </div>
+
+{% endblock %}
