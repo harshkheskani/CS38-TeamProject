@@ -9,7 +9,7 @@ from leidos_app.models import UserProfile, Business, MenuSection, SectionItem
 
 def populate():
     users = [{'username': 'ben', 'firstname': 'ben',
-              'lastname': 'bennison', 'password': '1234', 'profile_pic': 'media/profile_images/default.png', 
+              'lastname': 'bennison', 'password': 'test', 'profile_pic': 'media/profile_images/default.png', 
               'description': 'ahahahaaha', 'is_business_owner': 'True'}]
 
     businesses = [{'owner': 'ben', 'name':'Bobs Burgers', 'address': 'University Avenue, G12 8QW', 'img': 'media/business_images/business_default.png', 
@@ -31,7 +31,7 @@ def populate():
                         'description': 'food', 'price': '3', 'img': 'media/item_images/defaultfood.png'}]
 
     for u in users:
-        add_user(u['username'], u['firstname'], u['lastname'], u['password'], u['profile_pic'], u['description'], u['is_business_owner'])
+        add_user(u['username'], u['password'])
 
     for b in businesses:
         add_business(b['owner'], b['name'], b['address'], b['img'])
@@ -43,13 +43,13 @@ def populate():
         add_sectionItem(i['business'], i['section'], i['name'], i['description'], i['price'], i['img'])
 
 
-def add_user(username, firstname, lastname, password, profile_pic, description, is_business_owner):
-    new_user = User.objects.get_or_create(username=username, password=password, first_name=firstname, last_name=lastname)
-    if new_user[1]:
+def add_user(username, password):
+    new_user = User.objects.create_user(username=username)
+    new_user.set_password(password)
+    new_user.save()
+    if new_user:
         new_profile = UserProfile(user=User.objects.get(username=username))
-        new_profile.profile_pic = profile_pic
-        new_profile.description = description
-        new_profile.is_business_owner = is_business_owner
+        new_profile.is_business_owner = True
         new_profile.save()
 
 def add_business(owner, name, address, img):

@@ -27,7 +27,7 @@
 			</a>
 			<ul>
 				{% if user.is_authenticated %}
-					<li><a href="#">Profile</a></li>
+					<li><a href="{% url 'leidos_app:profile' %}">Profile</a></li>
 					<li><a href="{% url 'leidos_app:logout' %}">Logout</a></li>
 				{% else %}
 					<a href="{% url 'leidos_app:login' %}">Login</a>
