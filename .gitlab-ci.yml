@@ -12,4 +12,4 @@ Deployment:
     name: main
     url: $HEROKU_APP_HOST
   only:
-    - main
+    - master
