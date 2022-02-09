@@ -50,3 +50,10 @@ class RegisterBusinessForm(forms.ModelForm):
     class Meta:
         model = Business
         exclude = ('owner_fk',)
+
+
+class EditBusinessForm(forms.ModelForm):
+
+    class Meta:
+        model = Business
+        exclude = ('owner_fk', 'slug', 'name')

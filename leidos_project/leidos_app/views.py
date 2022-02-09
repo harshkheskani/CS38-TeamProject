@@ -170,11 +170,6 @@ def business(request, business_name_slug):
         return redirect(reverse('leidos_app:homepage'))
 
 @login_required
-def edit_business(request, business_name_slug):
-    messages.success("edit business info button working")
-    return redirect(reverse("leidos_app:business", kwargs={"business_name_slug":business_name_slug}))
-
-@login_required
 def add_opening_hours(request, business_name_slug):
 
     if not business_exists(business_name_slug):
@@ -231,6 +226,46 @@ def register_business(request):
             return redirect(reverse("leidos_app:business", kwargs={"business_name_slug": business_obj.slug}))
         else:
             return HttpResponse(form.errors)
+
+@login_required
+def edit_business(request, business_name_slug):
+
+    if not business_exists(business_name_slug):
+        messages.error(request, f"Business '{business_name_slug}' does not exist")
+        return redirect(reverse("leidos_app:homepage"))
+
+    business_obj = Business.objects.get(slug=business_name_slug)
+
+    if request.user != business_obj.owner_fk and not request.user.is_superuser:
+        messages.error(request, "You do not have access to this feature")
+        return redirect(reverse("leidos_app:homepage"))
+
+
+    if request.method == 'GET':
+        edit_form = EditBusinessForm(initial={
+            "name":business_obj.name,
+            "address": business_obj.address,
+            "img":business_obj.img,
+            "description": business_obj.description,
+        },)
+
+        return render(request, "leidos_app/edit_business.html", {"form":edit_form, "business":business_obj})
+
+    if request.method == 'POST':
+        edit_form = EditBusinessForm(request.POST, instance=business_obj)
+
+        if edit_form.is_valid():
+            business_edit = edit_form.save(commit=False)
+
+            if 'img' in request.FILES:
+                business_edit.img = request.FILES['img']
+
+            business_edit.save()
+            return redirect(reverse("leidos_app:business", kwargs={"business_name_slug": business_name_slug}))
+
+        else:
+            return HttpResponse(edit_form.errors)
+
 
 # UTILS #
 def get_business_info(business_slug):
