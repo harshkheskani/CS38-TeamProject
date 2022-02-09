@@ -21,7 +21,6 @@
 					<h4>{{ business.description }}</h4>
 				{% endif %}
 			{% if is_business_owner %}
-			<a href="{% url 'leidos_app:create_menu' %}">Edit Sections</a>
 				<a href="{% url 'leidos_app:edit_business' business.slug %}">Edit Business Details</a>
 			{% endif %}
 			</div>

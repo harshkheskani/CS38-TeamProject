@@ -14,16 +14,65 @@ Register Your Business
      <div class="form.css">
         <h1 class="form.h1">Edit Business Details</h1>
        <form
-			id="form"
 			method="post"
-			action="{% url 'leidos_app:edit_business' business.slug %}"
+			action="{% url 'leidos_app:save_business_edit' business.slug %}"
 			enctype="multipart/form-data"
 			class="auto-form">
 				{% csrf_token %}
-				{{ form.as_p }}
-
-				<button type="submit">EDIT</button>
+				{{ business_form.as_p }}
+				<button type="submit">Edit</button>
         </form>
+		{% if hours_forms %}
+			 <h1 class="form.h1">Edit Opening Hours</h1>
+			 {% for hour_form in hours_forms %}
+				<form
+				method="post"
+				action="{% url 'leidos_app:save_opening_hours_edit' hour_form.0.pk %}"
+				enctype="multipart/form-data"
+				class="auto-form">
+					{% csrf_token %}
+					{{ hour_form.1.as_p }}
+					<button type="submit">Edit</button>
+				</form>
+			 {% endfor %}
+		 {% endif %}
     </div>
+
+<nav id ="categories">
+		<ul>
+			{% for section in sections %}
+				<li><a href="#mains">{{ section.0.name }}</a></li>
+			{% endfor %}
+		</ul>
+	</nav>
+
+	<br>
+
+
+{% for section in sections %}
+	<div class="cat-name">
+		<span><b>{{ section.0.name }}</b></span>
+	</div>
+
+	<br>
+
+	<div class="tiles">
+	{% for item in section.1 %}
+		<div class="tile">
+			<div style="text-align: center;"><b>{{ item.name }}</b></div>
+			{% if item.img %}
+			<img src="{{MEDIA_URL}}{{item.img}}" alt="Banner" class="tile-image">
+			{% endif %}
+			<div class="tile-content">
+				{{ item.description }}
+			</div>
+			<div class="tile-price">
+				{{ item.price }}
+			</div>
+
+		</div>
+		{% endfor %}
+	</div>
+{% endfor %}
 
 {% endblock %}

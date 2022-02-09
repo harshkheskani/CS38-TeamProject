@@ -21,6 +21,13 @@ class UserProfileForm(forms.ModelForm):
         fields = ('profile_pic',)
 
 
+class AddSectionForm(forms.ModelForm):
+
+    class Meta:
+        model = MenuSection
+        exclude = ('business_fk',)
+
+
 class AddItemForm(forms.ModelForm):
 
 
@@ -32,7 +39,6 @@ class AddItemForm(forms.ModelForm):
 
     class Meta:
         model = SectionItem
-        fields = ('name', 'description', 'price', 'img')
         exclude = ('section_fk',)
         
 
@@ -57,3 +63,10 @@ class EditBusinessForm(forms.ModelForm):
     class Meta:
         model = Business
         exclude = ('owner_fk', 'slug', 'name')
+
+
+class EditOpeningHours(forms.ModelForm):
+
+    class Meta:
+        model = OpeningHours
+        exclude = ('business_fk',)

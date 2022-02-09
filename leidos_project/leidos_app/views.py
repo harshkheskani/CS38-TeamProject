@@ -242,17 +242,55 @@ def edit_business(request, business_name_slug):
 
 
     if request.method == 'GET':
-        edit_form = EditBusinessForm(initial={
+
+        context_dict = {"business":business_obj}
+
+        edit_business_form = EditBusinessForm(initial={
             "name":business_obj.name,
             "address": business_obj.address,
             "img":business_obj.img,
             "description": business_obj.description,
         },)
 
-        return render(request, "leidos_app/edit_business.html", {"form":edit_form, "business":business_obj})
+        context_dict["business_form"] = edit_business_form
+        opening_hour_obj_form_list = []
 
+        if OpeningHours.objects.filter(business_fk=business_obj).exists():
+            for opening_hours_obj in OpeningHours.objects.filter(business_fk=business_obj):
+                opening_hours_form = EditOpeningHours(initial={
+                    "weekday_from":opening_hours_obj.weekday_from,
+                    "weekday_to":opening_hours_obj.weekday_to,
+                    "from_hour":opening_hours_obj.from_hour,
+                    "to_hour":opening_hours_obj.to_hour,
+                })
+                # [(opening_hours_obj, opening_hours_form), ...]
+                opening_hour_obj_form_list.append((opening_hours_obj, opening_hours_form))
+
+            context_dict["hours_forms"] = opening_hour_obj_form_list
+        else:
+            context_dict["hours_forms"] = None
+
+        if MenuSection.objects.filter(business_fk=business_obj).exists():
+
+            menu_sections = MenuSection.objects.filter(business_fk=business_obj)
+
+            sections_list = []
+
+            for menu_section in menu_sections:
+                section_items = SectionItem.objects.filter(section_fk=menu_section)
+                sections_list.append((menu_section,section_items))
+
+            context_dict["sections"] = sections_list    # [ (section, QuerySet<item....>),.... ]
+        else:
+            context_dict["sections"] = None
+
+
+        return render(request, "leidos_app/edit_business.html", context_dict)
+
+
+def save_business_edit(request, business_name_slug):
     if request.method == 'POST':
-        edit_form = EditBusinessForm(request.POST, instance=business_obj)
+        edit_form = EditBusinessForm(request.POST, instance=Business.objects.get(slug=business_name_slug))
 
         if edit_form.is_valid():
             business_edit = edit_form.save(commit=False)
@@ -261,10 +299,27 @@ def edit_business(request, business_name_slug):
                 business_edit.img = request.FILES['img']
 
             business_edit.save()
-            return redirect(reverse("leidos_app:business", kwargs={"business_name_slug": business_name_slug}))
+            messages.success(request, "Business details successfully changed")
+            return redirect(reverse("leidos_app:edit_business", kwargs={"business_name_slug": business_name_slug}))
 
         else:
             return HttpResponse(edit_form.errors)
+
+
+def save_opening_hours_edit(request, hours_pk):
+    if request.method == 'POST':
+        hours = OpeningHours.objects.get(pk=hours_pk)
+        edit_form = EditOpeningHours(request.POST, instance=hours)
+
+        if edit_form.is_valid():
+            edit_form.save()
+            messages.success(request, "Opening hours details successfully changed")
+            return redirect(reverse("leidos_app:edit_business", kwargs={"business_name_slug": hours.business_fk.slug}))
+
+        else:
+            return HttpResponse(edit_form.errors)
+
+
 
 
 # UTILS #
