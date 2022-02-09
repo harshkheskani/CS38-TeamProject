@@ -230,7 +230,7 @@ def register_business(request):
 
             return redirect(reverse("leidos_app:business", kwargs={"business_name_slug": business_obj.slug}))
         else:
-            return HttpResponse(form.erros)
+            return HttpResponse(form.errors)
 
 # UTILS #
 def get_business_info(business_slug):
