@@ -37,3 +37,7 @@ class TestUrls(TestCase):
     def test_register_business_url_is_resolved(self):
         url = reverse('leidos_app:register_business')
         self.assertEquals(resolve(url).func, register_business)
+
+    def test_edit_business_url_is_resolved(self):
+        url = reverse('leidos_app:edit_business', args=["slug"])
+        self.assertEquals(resolve(url).func, edit_business)
