@@ -6,16 +6,6 @@ from leidos_app.forms import *
 from django.contrib import messages
 from django.urls import reverse
 
-# Create your views here.
-def base(request):
-    return render(request, 'leidos_app/base.html')
-
-
-def create_menu(request):
-    return render(request, 'leidos_app/create_menu.html', {"form":AddOpeningTimesForm()})
-
-def menu(request):
-    return render(request, 'leidos_app/menu.html')  
 
 def homepage(request):
     return render(request, 'leidos_app/homepage.html')
@@ -102,7 +92,6 @@ def user_logout(request):
     # Take the user back to the homepage.
     return redirect(reverse('leidos_app:homepage'))
 
-
 @login_required
 def create_section_item(request, business_name_slug):
 
@@ -114,29 +103,24 @@ def create_section_item(request, business_name_slug):
         messages.error(request, "You do not have access to this option")
         return redirect(reverse('leidos_app:business', kwargs={"business_name_slug":business_name_slug}))
 
+    if MenuSection.objects.filter(business_fk=Business.objects.get(slug=business_name_slug)).exists():
+        sections = MenuSection.objects.filter(business_fk=Business.objects.get(slug=business_name_slug))
+    else:
+        messages.error(request, "FATAL_ERROR:: Item creation attempted without pre-existing Section")
+        return redirect("leidos_app:homepage")
+
+    form = AddItemForm(request.POST or None, choices=[(section, section.name) for section in sections])
+
     if request.method == 'GET':
-        tuples = []
-        try:
-            sections = MenuSection.objects.filter(business_fk=Business.objects.get(slug=business_name_slug))
-            if len(sections) == 0: raise Exception
-
-            for section in sections:
-                tuples.append((section, section.name))
-
-            form = forms.AddItemForm(choices=tuples)
-            print(form)
-            return render(request, "leidos_app/create_menu.html", {"form":form})
-        except:
-            messages.error(request, "FATAL_ERROR:: Item creation attempted without pre-existing Section")
-            return redirect("leidos_app:homepage")
+        return render(request, "leidos_app/add_section_item.html", {"form":form, "business_name_slug":business_name_slug})
 
 
     if request.method == 'POST':
-        form = AddItemForm(request.POST)
 
         if form.is_valid():
             section_item = form.save(commit=False)
-            section_item.section_fk = request.get["section"]
+            section_item.section_fk = MenuSection.objects.get(name=request.POST.get("sections"),
+                                                              business_fk=Business.objects.get(slug=business_name_slug))
 
             if "img" in request.FILES:
                 section_item.img = request.FILES["img"]
@@ -149,8 +133,76 @@ def create_section_item(request, business_name_slug):
             messages.error(request, form.errors)
             return redirect(reverse("leidos_app:business", kwargs={"business_name_slug":business_name_slug}))
 
+@login_required
+def delete_section_item(request, item_pk):
+    if request.user != SectionItem.objects.get(pk=item_pk).business_fk.owner_fk and not request.user.is_superuser:
+        messages.error(request, "You do not have access to this feature")
+        return redirect("leidos_app:homepage")
+
+    object_to_delete = SectionItem.objects.get(pk=item_pk)
+    business_name_slug = object_to_delete.section_fk.business_fk.slug
+    s_name = object_to_delete.name
+    object_to_delete.delete()
+
+    if not SectionItem.objects.filter(pk=item_pk).exists():
+        messages.success(request, f"Item '{s_name}' successfully deleted")
+        return redirect(reverse("leidos_app:edit_business", kwargs={"business_name_slug": business_name_slug}))
+    else:
+        messages.error(request, f"Failed to delete Item '{s_name}'")
+        return redirect(reverse("leidos_app:edit_business", kwargs={"business_name_slug": business_name_slug}))
+
+@login_required
+def create_section(request, business_name_slug):
+
+    if not business_exists(business_name_slug):
+        messages.error(request, f"Business '{business_name_slug}' does not exist")
+        return redirect(reverse("leidos_app:homepage"))
+
+    if request.user != Business.objects.get(slug=business_name_slug).owner_fk:
+        messages.error(request, "You do not have access to this option")
+        return redirect(reverse('leidos_app:business', kwargs={"business_name_slug":business_name_slug}))
+
+    if request.method == 'GET':
+        return render(request, "leidos_app/add_section.html", {"form":AddSectionForm(), "slug":business_name_slug})
+
+    if request.method == 'POST':
+
+        form = AddSectionForm(request.POST)
+
+        if form.is_valid():
+            section = form.save(commit=False)
+            section.business_fk = Business.objects.get(slug=business_name_slug)
+            section.save()
+
+            return redirect(reverse("leidos_app:edit_business", kwargs={"business_name_slug": business_name_slug}))
+        else:
+            return HttpResponse(form.errors)
+
+@login_required
+def delete_section(request, section_pk):
+
+    if request.user != MenuSection.objects.get(pk=section_pk).business_fk.owner_fk and not request.user.is_superuser:
+        messages.error(request, "You do not have access to this feature")
+        return redirect("leidos_app:homepage")
+
+    object_to_delete = MenuSection.objects.get(pk=section_pk)
+    business_name_slug = object_to_delete.business_fk.slug
+    s_name = object_to_delete.name
+    object_to_delete.delete()
+
+    if not MenuSection.objects.filter(pk=section_pk).exists():
+        messages.success(request, f"Section '{s_name}' successfully deleted")
+        return redirect(reverse("leidos_app:edit_business", kwargs={"business_name_slug": business_name_slug}))
+    else:
+        messages.error(request, f"Failed to delete Section '{s_name}'")
+        return redirect(reverse("leidos_app:edit_business", kwargs={"business_name_slug": business_name_slug}))
+
 
 def business(request, business_name_slug):
+
+    if not business_exists(business_name_slug):
+        messages.error(request, f"Business '{business_name_slug}' does not exist")
+        return redirect(reverse("leidos_app:homepage"))
 
     if request.method == 'GET':
         # Retrieve all relevant information for business
@@ -185,18 +237,40 @@ def add_opening_hours(request, business_name_slug):
         form = AddOpeningTimesForm()
         existing_hours = OpeningHours.objects.filter(business_fk = Business.objects.get(slug=business_name_slug))
 
-        return render(request, "leidos_app/add_opening_times.html",{"form":form, "existing_hours":existing_hours})
+        return render(request, "leidos_app/add_opening_hours.html",{"form":form, "existing_hours":existing_hours,
+                                                                    "business_name_slug":business_name_slug})
 
     elif request.method == 'POST':
         form = AddOpeningTimesForm(request.POST)
 
-        opening_hours_form = form.save(commit=False)
-        opening_hours_form.business_fk = Business.objects.get(slug=business_name_slug)
-        opening_hours_form.save()
+        if form.is_valid():
+            opening_hours_form = form.save(commit=False)
+            opening_hours_form.business_fk = Business.objects.get(slug=business_name_slug)
+            opening_hours_form.save()
 
-        messages.success(request, "New opening time successfully added")
+            messages.success(request, "New opening time successfully added")
 
-        return redirect(reverse('leidos_app:business', kwargs={"business_name_slug": business_name_slug}))
+            return redirect(reverse('leidos_app:business', kwargs={"business_name_slug": business_name_slug}))
+        else:
+            return HttpResponse(form.errors)
+
+@login_required
+def delete_opening_hours(request, hours_pk):
+
+    if request.user != OpeningHours.objects.get(pk=hours_pk).business_fk.owner_fk and not request.user.is_superuser:
+        messages.error(request, "You do not have access to this feature")
+        return redirect("leidos_app:homepage")
+
+    object_to_delete = OpeningHours.objects.get(pk=hours_pk)
+    business_name_slug = object_to_delete.business_fk.slug
+    object_to_delete.delete()
+
+    if not OpeningHours.objects.filter(pk=hours_pk).exists():
+        messages.success(request, "Opening Hours successfully deleted")
+        return redirect(reverse("leidos_app:edit_business", kwargs={"business_name_slug": business_name_slug}))
+    else:
+        messages.error(request, "Failed to delete Opening Hours")
+        return redirect(reverse("leidos_app:edit_business", kwargs={"business_name_slug": business_name_slug}))
 
 @login_required
 def register_business(request):
@@ -287,7 +361,7 @@ def edit_business(request, business_name_slug):
 
         return render(request, "leidos_app/edit_business.html", context_dict)
 
-
+@login_required
 def save_business_edit(request, business_name_slug):
     if request.method == 'POST':
         edit_form = EditBusinessForm(request.POST, instance=Business.objects.get(slug=business_name_slug))
@@ -305,7 +379,7 @@ def save_business_edit(request, business_name_slug):
         else:
             return HttpResponse(edit_form.errors)
 
-
+@login_required
 def save_opening_hours_edit(request, hours_pk):
     if request.method == 'POST':
         hours = OpeningHours.objects.get(pk=hours_pk)

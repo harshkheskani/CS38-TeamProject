@@ -33,7 +33,7 @@ class AddItemForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
 
-        choices = kwargs.pop("choices")
+        choices = kwargs.pop("choices", None)
         super(AddItemForm, self).__init__(*args, **kwargs)
         self.fields["sections"] = forms.ChoiceField(choices=choices)
 
