@@ -52,7 +52,7 @@ def populate():
                         'description': 'food', 'price': '2', 'img': 'media/item_images/defaultfood.png'}]
 
     for u in users:
-        add_user(u['username'], u['password'])
+        add_user(u['username'], u['password'], u['is_business_owner'])
 
     for b in businesses:
         add_business(b['owner'], b['name'], b['address'], b['img'])
@@ -64,13 +64,13 @@ def populate():
         add_sectionItem(i['business'], i['section'], i['name'], i['description'], i['price'], i['img'])
 
 
-def add_user(username, password):
+def add_user(username, password, owner):
     new_user = User.objects.create_user(username=username)
     new_user.set_password(password)
     new_user.save()
     if new_user:
         new_profile = UserProfile(user=User.objects.get(username=username))
-        new_profile.is_business_owner = True
+        new_profile.is_business_owner = owner
         new_profile.save()
 
 def add_business(owner, name, address, img):
