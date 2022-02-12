@@ -14,5 +14,6 @@ urlpatterns = [
 	path('menu/', views.menu, name="menu"),
     path('business/<slug:business_name_slug>/', views.business, name="business"),
 	path('business/<slug:business_name_slug>/add_hours/', views.add_opening_hours, name="add_hours"),
-	path('business/<slug:business_name_slug>/edit_business/', views.edit_business, name="edit_business")
+	path('business/<slug:business_name_slug>/edit_business/', views.edit_business, name="edit_business"),
+	path('profile/', views.profile, name="profile"),
 ]

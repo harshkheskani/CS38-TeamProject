@@ -1,0 +1,46 @@
+.container{
+
+	width: 100%;   
+    background-color: teal;
+	position: relative;
+	text-align: center;
+}
+
+.avatar {
+	vertical-align: middle;
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+  }
+
+.table {
+	display: table;   /* Allow the centering to work */
+	margin: 0 auto;
+}
+
+ul#horizontal-list {
+	min-width: 696px;
+	list-style: none;
+	padding-top: 20px;
+	}
+
+ul#horizontal-list li {
+	display: inline;
+}
+
+#content {
+	display: flex;
+	justify-content: space-around;
+  }
+  
+  #left {
+	border: 1px solid lightgray;
+	background-color: red;
+	width: 40%;
+  }
+  
+  #right {
+	border: 1px solid lightgray;
+	background-color: green;
+	width: 40%;
+  }
