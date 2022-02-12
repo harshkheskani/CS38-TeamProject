@@ -26,13 +26,17 @@ class TestUrls(TestCase):
         url = reverse('leidos_app:business', args=["slug"])
         self.assertEquals(resolve(url).func, business)
 
-    def test_opening_hours_url_is_resolved(self):
-        url = reverse('leidos_app:add_hours', args=["slug"])
+    def test_add_opening_hours_url_is_resolved(self):
+        url = reverse('leidos_app:add_opening_hours', args=["slug"])
         self.assertEquals(resolve(url).func, add_opening_hours)
 
-    def test_create_menu_url_is_resolved(self):
-        url = reverse('leidos_app:create_menu')
-        self.assertEquals(resolve(url).func, create_menu)
+    def test_create_section_url_is_resolved(self):
+        url = reverse('leidos_app:create_section', args=["slug"])
+        self.assertEquals(resolve(url).func, create_section)
+
+    def test_create_section_item_url_is_resolved(self):
+        url = reverse('leidos_app:create_section_item', args=["slug"])
+        self.assertEquals(resolve(url).func, create_section_item)
 
     def test_register_business_url_is_resolved(self):
         url = reverse('leidos_app:register_business')

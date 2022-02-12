@@ -75,7 +75,7 @@ class SectionItem(models.Model):
 
     name = models.CharField(max_length=128)
     description = models.TextField(max_length=128, default="")
-    price = models.IntegerField()
+    price = models.FloatField()
     img = models.ImageField(upload_to="item_images", blank=True)
 
     def __str__(self):
