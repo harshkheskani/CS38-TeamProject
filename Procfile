@@ -1,1 +1,1 @@
-web: gunicorn leidos_app.wsgi --log-file -
+web: gunicorn wsgi:leidos_app
