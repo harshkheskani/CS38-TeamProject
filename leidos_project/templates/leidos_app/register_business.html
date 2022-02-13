@@ -10,9 +10,17 @@ Register Your Business
 {% endblock %}
 
 {% block body_block %}
+<style>
+	#content{
+    margin-left: 50px;
+	}
 
-     <div class="form.css">
-        <h1 class="form.h1">Register Business Here!</h1>
+	#head{
+    text-align: center;
+	}
+</style>
+     <div id="content">
+        <h1 id="head">Register Business Here!</h1>
        <form
 			id="form"
 			method="post"
@@ -22,7 +30,7 @@ Register Your Business
 				{% csrf_token %}
 				{{ form.as_p }}
 
-				<button type="submit">REGISTER</button>
+				<button class="btn btn-primary" type="submit">Register</button>
         </form>
     </div>
 

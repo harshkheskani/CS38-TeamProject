@@ -1,0 +1,30 @@
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#sectionItemModal">
+  Create Item
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="sectionItemModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="sectionItemModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="sectionItemModalLabel">Create New Item</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'leidos_app:create_section_item' business.slug %}"
+          enctype="multipart/form-data" class="auto-form">
+            <div class="form-control">
+            {% if section_item_form %}
+            {% csrf_token %}
+            {{section_item_form.as_p}}
+            {% endif %}
+            </div>
+          <button type="submit" class="btn btn-primary">Create</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

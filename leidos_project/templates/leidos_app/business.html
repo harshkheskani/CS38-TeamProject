@@ -21,7 +21,6 @@
 					<h4>{{ business.description }}</h4>
 				{% endif %}
 			{% if is_business_owner %}
-			<a href="{% url 'leidos_app:create_menu' %}">Edit Sections</a>
 				<a href="{% url 'leidos_app:edit_business' business.slug %}">Edit Business Details</a>
 			{% endif %}
 			</div>
@@ -45,7 +44,9 @@
 	<nav id ="categories">
 		<ul>
 			{% for section in sections %}
-				<li><a href="#mains">{{ section.0.name }}</a></li>
+				<li>
+					<a onclick=document.getElementById("{{ section.0.name }}").scrollIntoView(true) href="#mains">{{ section.0.name }}</a>
+				</li>
 			{% endfor %}
 		</ul>
 	</nav>
@@ -54,7 +55,7 @@
 
 
 {% for section in sections %}
-	<div class="cat-name">
+	<div id="{{ section.0.name }}" class="cat-name">
 		<span><b>{{ section.0.name }}</b></span>
 	</div>
 	
@@ -71,7 +72,7 @@
 				{{ item.description }}
 			</div>
 			<div class="tile-price">
-				{{ item.price }}
+				{{ item.price }}£
 			</div>
 			
 		</div>

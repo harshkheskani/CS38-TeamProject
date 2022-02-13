@@ -5,7 +5,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE',
 import django
 django.setup()
 from django.contrib.auth.models import User
-from leidos_app.models import UserProfile, Business, MenuSection, SectionItem
+from leidos_app.models import UserProfile, Business, MenuSection, SectionItem, OpeningHours
 
 def populate():
     users = [{'username': 'ben', 'firstname': 'ben',
@@ -62,7 +62,6 @@ def populate():
 
     for i in sectionItems:
         add_sectionItem(i['business'], i['section'], i['name'], i['description'], i['price'], i['img'])
-
 
 def add_user(username, password, owner):
     new_user = User.objects.create_user(username=username)
