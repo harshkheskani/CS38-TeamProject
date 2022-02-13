@@ -350,10 +350,12 @@ def edit_business(request, business_name_slug):
 
         if MenuSection.objects.filter(business_fk=Business.objects.get(slug=business_name_slug)).exists():
             sections = MenuSection.objects.filter(business_fk=Business.objects.get(slug=business_name_slug))
+            context_dict["section_item_form"] = AddItemForm(choices=[(section, section.name) for section in sections])
         else:
             sections = None
+            context_dict["section_item_form"] = None
 
-        context_dict["section_item_form"] = AddItemForm(choices=[(section, section.name) for section in sections])
+
 
         return render(request, "leidos_app/edit_business.html", context_dict)
 
