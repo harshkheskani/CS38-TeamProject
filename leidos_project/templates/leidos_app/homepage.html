@@ -1,8 +1,32 @@
 {% extends 'leidos_app/base.html' %}
 {% load static %}
 
+{% block head %}
+    <link rel="stylesheet" type = "text/css" href="{% static 'homepage_map.css' %}">
+    <script>
+        // Initialize and add the map
+        function initMap() {
+          // The location of Uluru
+          const uluru = { lat: -25.344, lng: 131.036 };
+          // The map, centered at Uluru
+          const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 4,
+            center: uluru,
+          });
+          // The marker, positioned at Uluru
+          const marker = new google.maps.Marker({
+            position: uluru,
+            map: map,
+          });
+        }
+      </script>
+{% endblock %}
+
 {% block body_block %}
-<div style="text-align: center;"><h1>LEIDOS</h1></div>
-<div style="text-align: center;"><span>Find a local food place near you</span></div>
-<div style="text-align: center;"><a href="{% url 'leidos_app:homepage' %}">Search!</a></div>
+    <div style="text-align: center;"><span>Find a local food place near you</span></div>
+    <div style="text-align: center;"><a href="{% url 'leidos_app:homepage' %}">Search!</a></div>
+    <div id = "map"></div>
+    <script async 
+    src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyBOLE9zYh4J-uU_dO_iykrtcu0YOL3f7_Y&callback=initMap">
+    </script>
 {% endblock %}
