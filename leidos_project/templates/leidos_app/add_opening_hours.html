@@ -6,8 +6,15 @@ Add New Section
 {% endblock %}
 
 {% block body_block %}
+<style>
+    #content{
+        margin-left: 50px;
+    }
+</style>
 
+<h1 id="content">Edit Opening Times</h1>
 {% if form %}
+    <div id="content">
     <form method="post" action="{% url 'leidos_app:add_opening_hours' business_name_slug %}"
           enctype="multipart/form-data" class="auto-form">
 
@@ -31,4 +38,5 @@ Add New Section
         </ul>
     {% endfor %}
 {% endif %}
+</div>
 {% endblock %}

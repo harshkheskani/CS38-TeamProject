@@ -7,9 +7,8 @@ input[type=password],input[type=text], input[type=email]{
   box-sizing: border-box;
 }
 
-.formh1{
+head{
     text-align: center;
-    background-color: #BBB;
 }
 
 input[type=button], input[type=submit], input[type=reset] {
@@ -24,9 +23,13 @@ input[type=button], input[type=submit], input[type=reset] {
 
 .form_css{
   max-width: 600px;
-  margin: auto;
+  margin-left: 50px;
   border-radius: 5px;
   background-color: #f2f2f2;
   padding: 20px;
   width:100%;
+  text-align: center;
+}
+#content{
+  margin-left: 50px;
 }
