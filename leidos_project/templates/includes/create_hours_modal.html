@@ -16,7 +16,7 @@
         <form method="post" action="{% url 'leidos_app:add_opening_hours' business.slug %}"
           enctype="multipart/form-data" class="auto-form">
             <div class="form-control">
-            {% if section_item_form %}
+            {% if hours_form %}
             {% csrf_token %}
             {{hours_form.as_p}}
             {% endif %}
