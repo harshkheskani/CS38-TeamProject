@@ -131,7 +131,7 @@ def create_section_item(request, business_name_slug):
 
 @login_required
 def delete_section_item(request, item_pk):
-    if request.user != SectionItem.objects.get(pk=item_pk).business_fk.owner_fk and not request.user.is_superuser:
+    if request.user != SectionItem.objects.get(pk=item_pk).section_fk.business_fk.owner_fk and not request.user.is_superuser:
         messages.error(request, "You do not have access to this feature")
         return redirect("leidos_app:homepage")
 

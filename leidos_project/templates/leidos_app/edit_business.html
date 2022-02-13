@@ -41,7 +41,7 @@ Register Your Business
 			</form>
 		 </div>
 		{% if hours_forms %}
-			 <h1 id="head">  Edit Opening Hours</h1>
+			 <h1 id="head">Edit Opening Hours</h1>
 			 <br />
 			 {% for hour_form in hours_forms %}
 				<form
@@ -52,11 +52,9 @@ Register Your Business
 					{% csrf_token %}
 					{{ hour_form.1.as_p }}
 					<button class="btn btn-secondary" type="submit">Edit</button>
+					<a class="btn btn-danger" href="{% url 'leidos_app:delete_opening_hours' hour_form.0.pk %}">Delete</a>
 				</form>
 				<br />
-		<p>Delete Opening Hours</p>
-		 <a class="btn btn-primary" href="{% url 'leidos_app:delete_opening_hours' hour_form.0.pk %}"
-			style="background-color: red">Delete</a>
 			 {% endfor %}
 		 {% endif %}
     </div>
@@ -78,6 +76,7 @@ Register Your Business
 {% for section in sections %}
 	<div id="{{ section.0.name }}" class="cat-name">
 		<span><b>{{ section.0.name }}</b></span>
+		<a href="{% url 'leidos_app:delete_section' section.0.pk %}" class="btn btn-danger">Delete Section</a>
 	</div>
 
 	<br>
@@ -95,7 +94,7 @@ Register Your Business
 			<div class="tile-price">
 				{{ item.price }}£
 			</div>
-
+			<a href="{% url 'leidos_app:delete_section_item' item.pk %}" class="btn btn-danger">Delete Item</a>
 		</div>
 		{% endfor %}
 	</div>
