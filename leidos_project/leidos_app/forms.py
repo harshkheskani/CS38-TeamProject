@@ -27,6 +27,10 @@ class AddSectionForm(forms.ModelForm):
         model = MenuSection
         exclude = ('business_fk',)
 
+        widgets = {
+            "name": forms.TextInput(attrs={"class":"form-control"}),
+        }
+
 
 class AddItemForm(forms.ModelForm):
 
@@ -40,7 +44,18 @@ class AddItemForm(forms.ModelForm):
     class Meta:
         model = SectionItem
         exclude = ('section_fk',)
-        
+
+        labels = {
+            "img": "Item Image",
+        }
+
+        widgets = {
+            "name": forms.TextInput(attrs={"class":"form-control"}),
+            "description": forms.Textarea(attrs={"class": "form-control"}),
+            "img": forms.ClearableFileInput(attrs={"class": "form-control"}),
+            "price": forms.NumberInput(attrs={"class": "form-control"}),
+            "sections": forms.Select(attrs={"class": "form-control"}),
+        }
 
 class AddOpeningTimesForm(forms.ModelForm):
 
@@ -48,6 +63,12 @@ class AddOpeningTimesForm(forms.ModelForm):
         model = OpeningHours
         exclude = ('business_fk',)
 
+        widgets = {
+            "weekday_from": forms.Select(attrs={"class": "form-control"}),
+            "weekday_to": forms.Select(attrs={"class": "form-control"}),
+            "from_hour": forms.Select(attrs={"class": "form-control"}),
+            "to_hour": forms.Select(attrs={"class": "form-control"}),
+        }
 
 class RegisterBusinessForm(forms.ModelForm):
 
@@ -57,13 +78,15 @@ class RegisterBusinessForm(forms.ModelForm):
         model = Business
         exclude = ('owner_fk',)
 
+        labels = {
+            "img": "Business Cover Image"
+        }
 
 class EditBusinessForm(forms.ModelForm):
 
     class Meta:
         model = Business
         exclude = ('owner_fk', 'slug', 'name')
-
 
 class EditOpeningHours(forms.ModelForm):
 

@@ -111,10 +111,6 @@ def create_section_item(request, business_name_slug):
 
     form = AddItemForm(request.POST or None, choices=[(section, section.name) for section in sections])
 
-    if request.method == 'GET':
-        return render(request, "leidos_app/add_section_item.html", {"form":form, "business_name_slug":business_name_slug})
-
-
     if request.method == 'POST':
 
         if form.is_valid():
@@ -127,11 +123,11 @@ def create_section_item(request, business_name_slug):
 
             section_item.save()
 
-            return redirect(reverse("leidos_app:business", kwargs={"business_name_slug":business_name_slug}))
+            return redirect(reverse("leidos_app:edit_business", kwargs={"business_name_slug":business_name_slug}))
         else:
             print(form.errors)
             messages.error(request, form.errors)
-            return redirect(reverse("leidos_app:business", kwargs={"business_name_slug":business_name_slug}))
+            return redirect(reverse("leidos_app:edit_business", kwargs={"business_name_slug":business_name_slug}))
 
 @login_required
 def delete_section_item(request, item_pk):
@@ -161,9 +157,6 @@ def create_section(request, business_name_slug):
     if request.user != Business.objects.get(slug=business_name_slug).owner_fk:
         messages.error(request, "You do not have access to this option")
         return redirect(reverse('leidos_app:business', kwargs={"business_name_slug":business_name_slug}))
-
-    if request.method == 'GET':
-        return render(request, "leidos_app/add_section.html", {"form":AddSectionForm(), "slug":business_name_slug})
 
     if request.method == 'POST':
 
@@ -233,14 +226,7 @@ def add_opening_hours(request, business_name_slug):
         return redirect(reverse('leidos_app:business', kwargs={"business_name_slug":business_name_slug}))
 
 
-    if request.method == 'GET':
-        form = AddOpeningTimesForm()
-        existing_hours = OpeningHours.objects.filter(business_fk = Business.objects.get(slug=business_name_slug))
-
-        return render(request, "leidos_app/add_opening_hours.html",{"form":form, "existing_hours":existing_hours,
-                                                                    "business_name_slug":business_name_slug})
-
-    elif request.method == 'POST':
+    if request.method == 'POST':
         form = AddOpeningTimesForm(request.POST)
 
         if form.is_valid():
@@ -250,7 +236,7 @@ def add_opening_hours(request, business_name_slug):
 
             messages.success(request, "New opening time successfully added")
 
-            return redirect(reverse('leidos_app:business', kwargs={"business_name_slug": business_name_slug}))
+            return redirect(reverse('leidos_app:edit_business', kwargs={"business_name_slug": business_name_slug}))
         else:
             return HttpResponse(form.errors)
 
@@ -358,6 +344,16 @@ def edit_business(request, business_name_slug):
         else:
             context_dict["sections"] = None
 
+
+        context_dict["section_form"] = AddSectionForm()
+        context_dict["hours_form"] = AddOpeningTimesForm()
+
+        if MenuSection.objects.filter(business_fk=Business.objects.get(slug=business_name_slug)).exists():
+            sections = MenuSection.objects.filter(business_fk=Business.objects.get(slug=business_name_slug))
+        else:
+            sections = None
+
+        context_dict["section_item_form"] = AddItemForm(choices=[(section, section.name) for section in sections])
 
         return render(request, "leidos_app/edit_business.html", context_dict)
 

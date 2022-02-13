@@ -13,9 +13,11 @@ Register Your Business
 
      <div class="form.css">
         <h1 class="form.h1">Edit Business Details</h1>
-		 <a href="{% url 'leidos_app:create_section' business.slug %}">Create New Section</a>
-		 <a href="{% url 'leidos_app:create_section_item' business.slug %}">Create New Item</a>
-		 <a href="{% url 'leidos_app:add_opening_hours' business.slug %}">Add Opening Hours</a>
+		 {% include 'includes/create_section_modal.html' %}
+		 {% if section_item_form %}
+		 	{% include 'includes/create_section_item_modal.html' %}
+		 {% endif %}
+		 {% include 'includes/create_hours_modal.html' %}
        <form
 			method="post"
 			action="{% url 'leidos_app:save_business_edit' business.slug %}"
