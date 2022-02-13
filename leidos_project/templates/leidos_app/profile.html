@@ -1,0 +1,41 @@
+{% extends 'leidos_app/base.html' %}
+{% load static %}
+
+{% block title_block %}
+	Profile Name
+{% endblock %}
+
+{% block body_block %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'profile.css' %}"/>
+
+    <div class="container">
+        
+        <div class="table">
+            <ul id="horizontal-list">
+                <li><img class="avatar" src="{% static 'images/default_profile.png' %}" alt="profile-image" /></li>
+                <li><h2>{{ user.username }}</h2></li>
+                <br>
+                
+                <li><a href="#">Edit Profile</a></li>
+                
+                {% if user.userprofile.is_business_owner %}
+                    <li><a href="#">Edit Business</a></li>
+                    <li><a href="#">View Business</a></li>
+                {% endif %}
+                    
+            </ul>
+        </div>
+
+    </div>
+
+    <div id="content">
+        <div id="left">
+        Favourites
+        </div>
+        <div id="right">
+        Comments
+        </div>
+    </div>
+
+{% endblock %}

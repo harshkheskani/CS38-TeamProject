@@ -20,6 +20,9 @@ def menu(request):
 def homepage(request):
     return render(request, 'leidos_app/homepage.html')
 
+@login_required
+def profile(request):
+    return render(request, 'leidos_app/profile.html')
 
 def user_register(request):
     registered = False
