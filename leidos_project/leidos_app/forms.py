@@ -55,7 +55,7 @@ class AddItemForm(forms.ModelForm):
 
         choices = kwargs.pop("choices", None)
         super(AddItemForm, self).__init__(*args, **kwargs)
-        self.fields["sections"] = forms.ChoiceField(choices=choices)
+        self.fields["sections"] = forms.ChoiceField(choices=choices, widget=forms.Select(attrs={"class":"form-select"}))
 
     class Meta:
         model = SectionItem
@@ -67,10 +67,9 @@ class AddItemForm(forms.ModelForm):
 
         widgets = {
             "name": forms.TextInput(attrs={"class":"form-control"}),
-            "description": forms.Textarea(attrs={"class": "form-control"}),
+            "description": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
             "img": forms.ClearableFileInput(attrs={"class": "form-control"}),
             "price": forms.NumberInput(attrs={"class": "form-control"}),
-            "sections": forms.Select(attrs={"class": "form-control"}),
         }
 
 class AddOpeningTimesForm(forms.ModelForm):
@@ -102,7 +101,7 @@ class RegisterBusinessForm(forms.ModelForm):
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "address": forms.TextInput(attrs={"class": "form-control"}),
             "img": forms.ClearableFileInput(attrs={"class": "form-control"}),
-            "description": forms.Textarea(attrs={"class": "form-control"}),
+            "description": forms.Textarea(attrs={"class": "form-control", "rows":3}),
         }
 
 class EditBusinessForm(forms.ModelForm):
@@ -118,7 +117,7 @@ class EditBusinessForm(forms.ModelForm):
         widgets = {
             "address": forms.TextInput(attrs={"class": "form-control"}),
             "img": forms.ClearableFileInput(attrs={"class": "form-control"}),
-            "description": forms.Textarea(attrs={"class": "form-control"}),
+            "description": forms.Textarea(attrs={"class": "form-control", "rows":3}),
         }
 
 class EditOpeningHours(forms.ModelForm):

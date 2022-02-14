@@ -29,31 +29,60 @@ Register Your Business
 		 {% include 'includes/create_hours_modal.html' %}
 		 </div>
 		 <br />
-		 <div class="container mt-3">
+		 <div class="container p-4 mt-3" style="background-color: #71a4f0; width:50%; border-radius: 5%">
 		   <form
 				method="post"
 				action="{% url 'leidos_app:save_business_edit' business.slug %}"
 				enctype="multipart/form-data"
-				class="auto-form">
+				class="row g-3">
 					{% csrf_token %}
-					{{ business_form.as_p }}
-					<button class="btn btn-secondary" type="submit">Edit</button>
+					<div class="col-md-7" aria-required="true">
+						<label for="id_address" class="form-label">Address</label>
+						{{ business_form.address }}
+                	 </div>
+			   		<div class="col-md-5" aria-required="false">
+						<label for="id_img" class="form-label">Business Cover Image</label>
+						{{ business_form.img }}
+                	 </div>
+			   		<div class="col-md-12" aria-required="false">
+						<label for="id_description" class="form-label">Business Description</label>
+						{{ business_form.description }}
+                	 </div>
+					<button class="btn btn-secondary col-md-1" type="submit">Edit</button>
 			</form>
 		 </div>
 		{% if hours_forms %}
 			 <h1 id="head">Edit Opening Hours</h1>
 			 <br />
 			 {% for hour_form in hours_forms %}
+		  <div class="container p-4 mt-3" style="background-color: #71a4f0;width: 35% ; border-radius: 5%">
 				<form
 				method="post"
 				action="{% url 'leidos_app:save_opening_hours_edit' hour_form.0.pk %}"
 				enctype="multipart/form-data"
-				class="auto-form">
+				class="row g-3">
 					{% csrf_token %}
-					{{ hour_form.1.as_p }}
-					<button class="btn btn-secondary" type="submit">Edit</button>
-					<a class="btn btn-danger" href="{% url 'leidos_app:delete_opening_hours' hour_form.0.pk %}">Delete</a>
+
+					 <div class="col-md-6" aria-required="true">
+						<label for="id_weekdays_from" class="form-label">Weekday From</label>
+						{{ hour_form.1.weekday_from }}
+                	 </div>
+					<div class="col-md-6" aria-required="false">
+						<label for="id_weekdays_to" class="form-label">Weekday To</label>
+						{{ hour_form.1.weekday_to }}
+                	 </div>
+					<div class="col-md-6" aria-required="true">
+						<label for="id_from_hour" class="form-label">From Hour</label>
+						{{ hour_form.1.from_hour }}
+                	 </div>
+					<div class="col-md-6" aria-required="true">
+						<label for="id_to_hour" class="form-label">To Hour</label>
+						{{ hour_form.1.to_hour }}
+                	 </div>
+					<button class="btn btn-secondary col-md-3" type="submit">Edit</button>
+					<a class="btn btn-danger col-md-3" href="{% url 'leidos_app:delete_opening_hours' hour_form.0.pk %}">Delete</a>
 				</form>
+			 </div>
 				<br />
 			 {% endfor %}
 		 {% endif %}

@@ -126,6 +126,8 @@ def create_section_item(request, business_name_slug):
 
             section_item.save()
 
+            messages.success(request, f"Added '{section_item.name}' to section "
+                                      f"'{section_item.section_fk.name}'")
             return redirect(reverse("leidos_app:edit_business", kwargs={"business_name_slug":business_name_slug}))
         else:
             print(form.errors)
@@ -170,6 +172,7 @@ def create_section(request, business_name_slug):
             section.business_fk = Business.objects.get(slug=business_name_slug)
             section.save()
 
+            messages.success(request, f"Sections '{section.name}' has been created successfully.")
             return redirect(reverse("leidos_app:edit_business", kwargs={"business_name_slug": business_name_slug}))
         else:
             return HttpResponse(form.errors)
