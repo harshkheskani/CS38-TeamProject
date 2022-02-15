@@ -69,7 +69,7 @@ class AddItemForm(forms.ModelForm):
             "name": forms.TextInput(attrs={"class":"form-control"}),
             "description": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
             "img": forms.ClearableFileInput(attrs={"class": "form-control"}),
-            "price": forms.NumberInput(attrs={"class": "form-control"}),
+            "price": forms.NumberInput(attrs={"class": "form-control", "min":0}),
         }
 
 class AddOpeningTimesForm(forms.ModelForm):
@@ -101,7 +101,7 @@ class RegisterBusinessForm(forms.ModelForm):
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "address": forms.TextInput(attrs={"class": "form-control"}),
             "img": forms.ClearableFileInput(attrs={"class": "form-control"}),
-            "description": forms.Textarea(attrs={"class": "form-control", "rows":3}),
+            "description": forms.Textarea(attrs={"class": "form-control", "rows":7, "style":"height: 178px;"}),
         }
 
 class EditBusinessForm(forms.ModelForm):

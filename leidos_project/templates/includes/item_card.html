@@ -1,0 +1,11 @@
+<div class="card" style="width: 18rem;">
+  <img class="card-img-top" src="{{MEDIA_URL}}{{item.img}}" alt="Item Image">
+  <div class="card-body">
+    <h5 class="card-title">{{item.name}}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">{{item.price}}£</h6>
+    <p class="card-text">{{item.description}}</p>
+    {% if "edit_business" in request.path %}
+    <a class="btn btn-danger" href="{% url 'leidos_app:delete_section_item' item.pk %}">Delete Item</a>
+    {% endif %}
+  </div>
+</div>

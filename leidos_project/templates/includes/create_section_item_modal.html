@@ -17,27 +17,34 @@
           enctype="multipart/form-data" class="row g-3">
             {% if section_item_form %}
             {% csrf_token %}
+
                 <div class="col-md-12" aria-required="true">
+
                     <label for="id_name" class="form-label">Name</label>
                     {{ section_item_form.name }}
-                </div>
-                <div class="col-md-12" aria-required="false">
+
                     <label for="id_description" class="form-label" >Description</label>
                     {{ section_item_form.description }}
-                </div>
-                <div class="col-md-12">
-                 <label for="id_img" class="form-label">Item Image</label>
+
+                    <label for="id_img" class="form-label">Item Image</label>
                     {{ section_item_form.img }}
+
                 </div>
+
                 <div class="col-md-6" aria-required="true">
+
                     <label for="id_price" class="form-label">Item Price</label>
                     {{ section_item_form.price }}
+
                 </div>
 
                 <div class="col-md-6">
+
                     <label for="id_sections" class="form-label">Choose Item Section</label>
                     {{ section_item_form.sections }}
+
                 </div>
+            
             {% endif %}
           <button type="submit" class="btn btn-primary">Create</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

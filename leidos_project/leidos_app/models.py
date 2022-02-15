@@ -20,7 +20,7 @@ WEEKDAYS = [
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_pic = models.ImageField(upload_to="profile_images", blank=True, default="profile_images/default.png")
-    description = models.TextField(max_length=1024, default="")
+    description = models.TextField(max_length=1024, blank=True, default="")
 
     # boolean flag for identifying business owners
     is_business_owner = models.BooleanField(default=False)
@@ -74,7 +74,7 @@ class SectionItem(models.Model):
     section_fk = models.ForeignKey(MenuSection, on_delete=models.CASCADE)
 
     name = models.CharField(max_length=128)
-    description = models.TextField(max_length=128, default="")
+    description = models.TextField(max_length=128, blank=True, default="")
     price = models.FloatField()
     img = models.ImageField(upload_to="item_images", blank=True)
 

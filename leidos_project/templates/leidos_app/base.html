@@ -21,7 +21,7 @@
 		<title>
 			Leidos -
 			{% block title_block %}
-				Base
+				Homepage
 			{% endblock %}
 		</title>
 
@@ -33,22 +33,7 @@
 				crossorigin="anonymous">
 		</script>
 
-		<!--{% include 'includes/navbar.html' %}-->
-
-		<nav class="navigation-bar">
-			<a href="{% url 'leidos_app:homepage' %}">
-			<img class="logo" src="{% static 'images/logo.png' %}" alt="logo" />
-			</a>
-			<ul>
-				{% if user.is_authenticated %}
-					<li><a href="{% url 'leidos_app:profile' %}">Profile</a></li>
-					<li><a href="{% url 'leidos_app:logout' %}">Logout</a></li>
-				{% else %}
-					<a href="{% url 'leidos_app:login' %}">Login</a>
-					<a href="{% url 'leidos_app:register' %}">Register</a>
-				{% endif %}
-			</ul>
-		</nav>
+		{% include 'includes/navbar.html' %}
 		
 		<div class = "main">
 

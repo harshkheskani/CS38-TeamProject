@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title_block %}
-	Business Name
+	{{business.name}}
 {% endblock %}
 
 {% block body_block %}
@@ -63,19 +63,7 @@
 	
 	<div class="tiles">
 	{% for item in section.1 %}
-		<div class="tile">
-			<div style="text-align: center;"><b>{{ item.name }}</b></div>
-			{% if item.img %}
-			<img src="{{MEDIA_URL}}{{item.img}}" alt="Banner" class="tile-image">
-			{% endif %}
-			<div class="tile-content">
-				{{ item.description }}
-			</div>
-			<div class="tile-price">
-				{{ item.price }}£
-			</div>
-			
-		</div>
+		{% include 'includes/item_card.html' %}
 		{% endfor %}
 	</div>
 {% endfor %}
