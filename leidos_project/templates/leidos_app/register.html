@@ -14,15 +14,27 @@
 {% endblock %}
 
 {% block body_block %}
-    <div class="form.css">
-        <h1 class="form.h1">Register here!</h1>
-        <form id="user_form" method="post" action="{% url 'leidos_app:register' %}">
+<h1 class="form.h1">Register here!</h1>
+    <div class="container p-4 mt-5" style="width: 75%;">
+        <form class="row g-3" method="post" action="{% url 'leidos_app:register' %}">
             {% csrf_token %}
-
-            {{ user_form.as_p }}
-            {{ profile_form.as_p }}
-
-            <input type="submit" value="Submit" />
+            <div class="col-md-6" aria-required="true">
+                <label for="id_username" class="form-label">Username</label>
+                {{ user_form.username }}
+            </div>
+            <div class="col-md-6" aria-required="true">
+                 <label for="id_password" class="form-label">Password</label>
+                {{ user_form.password }}
+            </div>
+            <div class="col-md-6">
+                 <label for="id_profile_pic" class="form-label">Profile Picture</label>
+                {{ profile_form.profile_pic }}
+            </div>
+            <div class="col-md-6">
+                 <label for="id_is_buiness_owner" class="form-label">Are You Business Owner?</label>
+                {{ profile_form.is_business_owner }}
+            </div>
+            <input class="btn btn-primary" type="submit" value="Register" />
         </form>
     </div>
 {% endblock %}

@@ -1,0 +1,123 @@
+{% extends 'leidos_app/base.html' %}
+{% load static %}
+
+{% block title_block %}
+Edit Business Details
+{% endblock %}
+
+{% block body_block %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'business.css' %}"/>
+
+     <div class="container mt-3" id="content">
+        <h1 id="head">Edit Business Details</h1>
+		<div id="head">
+		 {% include 'includes/create_section_modal.html' %}
+		 {% if section_item_form %}
+		 	{% include 'includes/create_section_item_modal.html' %}
+		 {% endif %}
+		 {% include 'includes/create_hours_modal.html' %}
+		 </div>
+		 <br />
+		 <div class="container p-4 mt-3" style="background-color: #71a4f0; width:50%; border-radius: 5%">
+		   <form
+				method="post"
+				action="{% url 'leidos_app:save_business_edit' business.slug %}"
+				enctype="multipart/form-data"
+				class="row g-3">
+					{% csrf_token %}
+					<div class="col-md-7" aria-required="true">
+						<label for="id_address" class="form-label">Address</label>
+						{{ business_form.address }}
+                	 </div>
+			   		<div class="col-md-5" aria-required="false">
+						<label for="id_img" class="form-label">Business Cover Image</label>
+						{{ business_form.img }}
+                	 </div>
+			   		<div class="col-md-12" aria-required="false">
+						<label for="id_description" class="form-label">Business Description</label>
+						{{ business_form.description }}
+                	 </div>
+					<button class="btn btn-secondary col-md-1" type="submit">Edit</button>
+			</form>
+		 </div>
+		 <br/>
+		{% if hours_forms %}
+			 <h1 id="head">Edit Opening Hours</h1>
+			 <br />
+		 <div class="tiles">
+			 {% for hour_form in hours_forms %}
+		  <div class="container p-4 mt-3" style="background-color: #71a4f0; border-radius: 5%">
+				<form
+				method="post"
+				action="{% url 'leidos_app:save_opening_hours_edit' hour_form.0.pk %}"
+				enctype="multipart/form-data"
+				class="row g-3">
+					{% csrf_token %}
+
+					 <div class="col-md-6" aria-required="true">
+
+						<label for="id_weekdays_from" class="form-label">Weekday From</label>
+						{{ hour_form.1.weekday_from }}
+
+						 <label for="id_from_hour" class="form-label">From Hour</label>
+						{{ hour_form.1.from_hour }}
+
+                	 </div>
+
+					<div class="col-md-6" aria-required="false">
+
+						<label for="id_weekdays_to" class="form-label">Weekday To</label>
+						{{ hour_form.1.weekday_to }}
+
+						<label for="id_to_hour" class="form-label">To Hour</label>
+						{{ hour_form.1.to_hour }}
+
+                	 </div>
+
+					<div class="col d-flex">
+						<button class="btn btn-secondary" type="submit">Edit</button>
+					</div>
+
+					<div class="col d-flex justify-content-end align-items-end">
+						<a class="btn btn-danger" type="button" href="{% url 'leidos_app:delete_opening_hours' hour_form.0.pk %}">Delete</a>
+					</div>
+
+				</form>
+			 </div>
+				<br />
+			 {% endfor %}
+		 {% endif %}
+		 </div>
+    </div>
+	<br />
+
+<nav id ="categories">
+		<ul>
+			{% for section in sections %}
+				<li>
+					<a onclick=document.getElementById("{{ section.0.name }}").scrollIntoView(true) href="#mains">{{ section.0.name }}</a>
+				</li>
+			{% endfor %}
+		</ul>
+	</nav>
+
+	<br>
+
+
+{% for section in sections %}
+	<div id="{{ section.0.name }}" class="cat-name">
+		<span><b>{{ section.0.name }}</b></span>
+		{% include 'includes/delete_section_modal.html' %}
+	</div>
+
+	<br>
+
+	<div class="tiles">
+	{% for item in section.1 %}
+		{% include 'includes/item_card.html' %}
+	{% endfor %}
+	</div>
+{% endfor %}
+
+{% endblock %}

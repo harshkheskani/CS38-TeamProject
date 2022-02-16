@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title_block %}
-	Business Name
+	{{business.name}}
 {% endblock %}
 
 {% block body_block %}
@@ -12,17 +12,29 @@
 	<div class="banner-container" >
 		
 		<span class="">
-			<img src="{% static 'images/banner.jpg' %}" alt="Banner">
+			{% if business.img %}
+				<img src="{{MEDIA_URL}}{{business.img}}" alt="Banner">
+			{% endif %}
 			<div class="business-name">
-			<h1>Bob's Burgers</h1>
-			<h4>American, Burgers, Vegetarian, Allergy-Friendly</h4>
+			<h1>{{ business.name }}</h1>
+				{% if business.description %}
+					<h4>{{ business.description }}</h4>
+				{% endif %}
 			{% if is_business_owner %}
-			<a href="{% url 'leidos_app:create_menu' %}"  >Edit menu</a>
+				<a href="{% url 'leidos_app:edit_business' business.slug %}">Edit Business Details</a>
 			{% endif %}
 			</div>
-			<h3><p style="text-align:left;">Hillhead St, G12 8QE
-			<span style="float:right;">Open : 11am - 8pm</span></h3>
-   			 </p>
+			<h3><p style="text-align:left;">{{ business.address }}
+			{% for hour in opening_hours %}
+				{% if hour.weekday_to|length > 0 %}
+					<span style="float:right;
+						">Open : {{ hour.weekday_from }} - {{ hour.weekday_to }}  {{ hour.from_hour}} - {{ hour.to_hour }}</span>
+				{% else %}
+					<span style="float:right;
+						">Open : {{ hour.weekday_from }}  {{ hour.from_hour}} - {{ hour.to_hour }}</span>
+				{% endif %}
+				{% endfor %}
+   			 </p></h3>
 		</span>
 		
 	</div>
@@ -31,226 +43,31 @@
 	
 	<nav id ="categories">
 		<ul>
-			<li><a href="#mains">Mains</a></li>
-			<li><a href="#sides">Sides</a></li>
-			<li><a href="#drinks">Drinks</a></li>
+			{% for section in sections %}
+				<li>
+					<a onclick=document.getElementById("{{ section.0.name }}").scrollIntoView(true) href="#mains">{{ section.0.name }}</a>
+				</li>
+			{% endfor %}
 		</ul>
 	</nav>
 	
 	<br>
-	
-	<div class="cat-name">
-		<span>Mains</span>
+
+
+{% for section in sections %}
+	<div id="{{ section.0.name }}" class="cat-name">
+		<span><b>{{ section.0.name }}</b></span>
 	</div>
 	
 	<br>
 	
 	<div class="tiles">
-	
-		<div class="tile">
-			
-			<img src="{% static 'images/banner.jpg' %}" alt="Banner" class="tile-image">
-			<div class="tile-content">
-				Item Description
-			</div>
-			<div class="tile-price">
-				Price
-			</div>
-			
-		</div>
-		
-		<div class="tile">
-			
-			<img src="{% static 'images/banner.jpg' %}" alt="Banner" class="tile-image">
-			<div class="tile-content">
-				Item Description
-			</div>
-			<div class="tile-price">
-				Price
-			</div>
-			
-		</div>
-		
-		<div class="tile">
-			
-			<img src="{% static 'images/banner.jpg' %}" alt="Banner" class="tile-image">
-			<div class="tile-content">
-				Item Name
-			</div>
-			<div class="tile-price">
-				Price
-			</div>
-			
-		</div>
-		
-		<div class="tile">
-			
-			<img src="{% static 'images/banner.jpg' %}" alt="Banner" class="tile-image">
-			<div class="tile-content">
-				Item Description
-			</div>
-			<div class="tile-price">
-				Price
-			</div>
-			
-		</div>
-		
-		<div class="tile">
-			
-			<img src="{% static 'images/banner.jpg' %}" alt="Banner" class="tile-image">
-			<div class="tile-content">
-				Item Description
-			</div>
-			<div class="tile-price">
-				Price
-			</div>
-			
-		</div>
-		
+	{% for item in section.1 %}
+		{% include 'includes/item_card.html' %}
+		{% endfor %}
 	</div>
-	
-	<br>
-	
-	<div class="cat-name">
-		<span>Sides</span>
-	</div>
-	
-	<br>
-	
-	<div class="tiles">
-	
-		<div class="tile">
-			
-			<img src="{% static 'images/banner.jpg' %}" alt="Banner" class="tile-image">
-			<div class="tile-content">
-				Item Description
-			</div>
-			<div class="tile-price">
-				Price
-			</div>
-			
-		</div>
-		
-		<div class="tile">
-			
-			<img src="{% static 'images/banner.jpg' %}" alt="Banner" class="tile-image">
-			<div class="tile-content">
-				Item Description
-			</div>
-			<div class="tile-price">
-				Price
-			</div>
-			
-		</div>
-		
-		<div class="tile">
-			
-			<img src="{% static 'images/banner.jpg' %}" alt="Banner" class="tile-image">
-			<div class="tile-content">
-				Item Name
-			</div>
-			<div class="tile-price">
-				Price
-			</div>
-			
-		</div>
-		
-		<div class="tile">
-			
-			<img src="{% static 'images/banner.jpg' %}" alt="Banner" class="tile-image">
-			<div class="tile-content">
-				Item Description
-			</div>
-			<div class="tile-price">
-				Price
-			</div>
-			
-		</div>
-		
-		<div class="tile">
-			
-			<img src="{% static 'images/banner.jpg' %}" alt="Banner" class="tile-image">
-			<div class="tile-content">
-				Item Description
-			</div>
-			<div class="tile-price">
-				Price
-			</div>
-			
-		</div>
-		
-	</div>
-	<br>
-	
-	<div class="cat-name">
-		<span>Drinks</span>
-	</div>
-	
-	<br>
-	
-	<div class="tiles">
-	
-		<div class="tile">
-			
-			<img src="{% static 'images/banner.jpg' %}" alt="Banner" class="tile-image">
-			<div class="tile-content">
-				Item Description
-			</div>
-			<div class="tile-price">
-				Price
-			</div>
-			
-		</div>
-		
-		<div class="tile">
-			
-			<img src="{% static 'images/banner.jpg' %}" alt="Banner" class="tile-image">
-			<div class="tile-content">
-				Item Description
-			</div>
-			<div class="tile-price">
-				Price
-			</div>
-			
-		</div>
-		
-		<div class="tile">
-			
-			<img src="{% static 'images/banner.jpg' %}" alt="Banner" class="tile-image">
-			<div class="tile-content">
-				Item Name
-			</div>
-			<div class="tile-price">
-				Price
-			</div>
-			
-		</div>
-		
-		<div class="tile">
-			
-			<img src="{% static 'images/banner.jpg' %}" alt="Banner" class="tile-image">
-			<div class="tile-content">
-				Item Description
-			</div>
-			<div class="tile-price">
-				Price
-			</div>
-			
-		</div>
-		
-		<div class="tile">
-			
-			<img src="{% static 'images/banner.jpg' %}" alt="Banner" class="tile-image">
-			<div class="tile-content">
-				Item Description
-			</div>
-			<div class="tile-price">
-				Price
-			</div>
-			
-		</div>
-		
-	</div>
+{% endfor %}
+
 	
 {% endblock %}
 

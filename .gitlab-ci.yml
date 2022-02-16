@@ -8,8 +8,10 @@ Deployment:
     - gem install dpl
   script:
     - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_API_KEY
+  tags:
+    - docker
   environment:
     name: main
     url: $HEROKU_APP_HOST
   only:
-    - main
+    - master
