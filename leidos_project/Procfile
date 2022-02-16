@@ -1,0 +1,2 @@
+release: python manage.py migrate
+web: gunicorn leidos_project.wsgi --log-file -
