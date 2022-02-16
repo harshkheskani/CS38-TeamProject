@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-%=iy&#wrx_7jf#l(*g-_=b*6g_67@22*)#$n!4@fzj*zve@&2%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'https://leidos-app.herokuapp.com/']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'https://leidos-app.herokuapp.com/', 'https://contin-test.herokuapp.com/']
 
 LOGGING = {
     'version': 1,
