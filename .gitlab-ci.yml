@@ -1,7 +1,23 @@
 stages:
+  - test
   - deploy
 
-Deployment:
+test:
+  image: python:3.8.3
+  stage: test
+  before_script:
+    - pip install -r requirements.txt
+
+  when: on_success
+  tags:
+    - docker
+  script:
+    - python manage.py migrate
+    - python manage.py collectstatic --noinput
+  only:
+    - deploy
+
+deploy:
   image: ruby:latest
   stage: deploy
   before_script:
@@ -14,4 +30,4 @@ Deployment:
     name: main
     url: $HEROKU_APP_HOST
   only:
-    - master
+    - deploy
