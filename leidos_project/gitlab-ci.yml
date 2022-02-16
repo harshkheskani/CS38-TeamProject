@@ -6,7 +6,6 @@ test:
   image: python:3.8.3
   stage: test
   before_script:
-    - cd leidos_project
     - pip install -r requirements.txt
 
   when: on_success
