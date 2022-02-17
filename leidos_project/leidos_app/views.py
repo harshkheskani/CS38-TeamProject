@@ -5,10 +5,28 @@ from django.contrib.auth import authenticate, login, logout
 from leidos_app.forms import *
 from django.contrib import messages
 from django.urls import reverse
+from django.utils.text import slugify
 
 
 def homepage(request):
+    #TODO query list of closest businesses and return it in context dict.
     return render(request, 'leidos_app/homepage.html')
+
+def search_business(request, path):
+
+    path = path.replace("X", "/")
+
+    b_name = request.GET.get("business_name", "")
+
+    b_slug = slugify(b_name)
+
+    if business_exists(b_slug):
+        return redirect(reverse("leidos_app:business", kwargs={"business_name_slug":b_slug}))
+    else:
+        messages.warning(request, f"Business {b_name} does not exist")
+        return redirect(path)
+
+
 
 @login_required
 def profile(request):
