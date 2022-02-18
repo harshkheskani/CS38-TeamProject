@@ -16,7 +16,7 @@
 {% block body_block %}
 <h1 class="form.h1">Register here!</h1>
     <div class="container p-4 mt-5" style="width: 75%;">
-        <form class="row g-3" method="post" action="{% url 'leidos_app:register' %}">
+        <form class="row g-3" method="post" action="{% url 'leidos_app:register' %}" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="col-md-6" aria-required="true">
                 <label for="id_username" class="form-label">Username</label>
