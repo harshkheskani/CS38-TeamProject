@@ -45,9 +45,12 @@
 		<ul>
 			{% for section in sections %}
 				<li>
-					<a onclick=document.getElementById("{{ section.0.name }}").scrollIntoView(true) href="#mains">{{ section.0.name }}</a>
+					<a onclick=document.getElementById("{{ section.0.name }}").scrollIntoView(true) href="#">{{ section.0.name }}</a>
 				</li>
 			{% endfor %}
+			<li>
+				<a onclick=document.getElementById("comments").scrollIntoView(true) href="#">Comments</a>
+			</li>
 		</ul>
 	</nav>
 	
@@ -68,7 +71,29 @@
 	</div>
 {% endfor %}
 
-	
+
+<div class="cat-name">
+	<span><b>Comments</b></span>
+	{% if not user.is_anonymous and user.is_authenticated and user != business.owner_fk %}
+		{% include 'includes/add_comment_modal.html' %}
+	{% endif %}
+</div>
+
+
+	<style>
+		.no-gutter > [class*="col-"]{
+			padding-right: 5%;
+			padding-left: 5%;
+		}
+	</style>
+
+<div class="container-flex row no-gutter">
+{% if comments %}
+	{% for comment in comments %}
+		{% include 'includes/comment_container.html' %}
+	{% endfor %}
+{% endif %}
+</div>
 {% endblock %}
 
 

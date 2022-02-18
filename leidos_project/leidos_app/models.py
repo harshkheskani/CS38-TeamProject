@@ -87,6 +87,7 @@ class Comment(models.Model):
     business_fk = models.ForeignKey(Business, on_delete=models.CASCADE)
 
     content = models.TextField(max_length=1024, blank=False)
+    date_posted = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.content

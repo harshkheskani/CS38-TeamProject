@@ -133,3 +133,13 @@ class EditOpeningHours(forms.ModelForm):
             "to_hour": forms.Select(attrs={"class": "form-control"}),
         }
 
+class AddCommentForm(forms.ModelForm):
+
+    class Meta:
+        model = Comment
+        exclude = ('business_fk', 'user_fk', 'date_posted',)
+
+        widgets = {
+            "content": forms.Textarea(attrs={"class": "form-control", "rows":3}),
+        }
+

@@ -75,7 +75,14 @@ def user_register(request):
             return redirect(reverse("leidos_app:homepage"))
 
         else:
-            print(user_form.errors, profile_form.errors)
+            for field in user_form:
+                for error in field.errors:
+                    messages.warning(request, error)
+            for field in profile_form:
+                for error in field.errors:
+                    messages.warning(request, error)
+
+            return redirect(reverse("leidos_app:register"))
 
     else:
         user_form = UserForm()
@@ -253,6 +260,10 @@ def business(request, business_name_slug):
         if context_dict is not None:
 
             context_dict["is_business_owner"] = request.user == context_dict["business"].owner_fk
+            context_dict["comment_form"] = AddCommentForm()
+
+            if Comment.objects.filter(business_fk=context_dict["business"]).exists():
+                context_dict["comments"] = Comment.objects.filter(business_fk = context_dict["business"])
 
             return render(request, "leidos_app/business.html", context_dict)
         else:
@@ -480,6 +491,48 @@ def remove_favorite(request, business_name_slug):
 
     return redirect(reverse("leidos_app:business", kwargs={"business_name_slug":business_name_slug}))
 
+@login_required
+def add_comment(request, business_name_slug):
+
+    if not business_exists(business_name_slug):
+        messages.error(request, f"Business {business_name_slug} does not exists")
+        return redirect('leidos_app:homepage')
+
+    business_obj = Business.objects.get(slug=business_name_slug)
+
+    if request.user == business_obj.owner_fk:
+        messages.info(request, f"You can not post comment on you own business")
+        return redirect(reverse("leidos_app:business", kwargs={"business_name_slug":business_name_slug}))
+
+    form = AddCommentForm(request.POST or None)
+
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.business_fk = business_obj
+        comment.user_fk = request.user
+        comment.save()
+        messages.success(request, "Comment successfully added")
+        return redirect(reverse("leidos_app:business", kwargs={"business_name_slug": business_name_slug}))
+
+    else:
+        return HttpResponse(form.errors)
+
+def delete_comment(request, comment_pk):
+
+    if request.user != Comment.objects.get(pk=comment_pk).user_fk and not request.user.is_superuser:
+        messages.error(request, "You do not have access to this feature")
+        return redirect("leidos_app:homepage")
+
+    object_to_delete = Comment.objects.get(pk=comment_pk)
+    business_name_slug = object_to_delete.business_fk.slug
+    object_to_delete.delete()
+
+    if not Comment.objects.filter(pk=comment_pk).exists():
+        messages.success(request, "Comment successfully deleted")
+        return redirect(reverse("leidos_app:business", kwargs={"business_name_slug": business_name_slug}))
+    else:
+        messages.error(request, "Failed to delete Comment")
+        return redirect(reverse("leidos_app:business", kwargs={"business_name_slug": business_name_slug}))
 
 
 # UTILS #
