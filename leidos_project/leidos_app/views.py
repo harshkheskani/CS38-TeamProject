@@ -9,8 +9,13 @@ from django.utils.text import slugify
 
 
 def homepage(request):
+
+    context_dict = {
+        "businesses": get_all_businesses()
+    }
+
     #TODO query list of closest businesses and return it in context dict.
-    return render(request, 'leidos_app/homepage.html')
+    return render(request, 'leidos_app/homepage.html', context_dict)
 
 def search_business(request, path):
 
@@ -30,9 +35,19 @@ def search_business(request, path):
 
 @login_required
 def profile(request):
-    return render(request, 'leidos_app/profile.html')
+
+    context_dict = {
+        "businesses": get_all_businesses()
+    }
+
+    return render(request, 'leidos_app/profile.html', context_dict)
 
 def user_register(request):
+
+    context_dict = {
+        "businesses": get_all_businesses()
+    }
+
     registered = False
 
     if request.method == "POST":
@@ -66,10 +81,16 @@ def user_register(request):
         user_form = UserForm()
         profile_form = UserProfileForm()
 
-    return render(request, 'leidos_app/register.html', context={'user_form': user_form, 'profile_form': profile_form})
+    return render(request, 'leidos_app/register.html', context=context_dict.update({'user_form': user_form,
+                                                                                    'profile_form': profile_form}))
 
 
 def user_login(request):
+
+    context_dict = {
+        "businesses": get_all_businesses()
+    }
+
     # If the request is an HTTP POST, try to pull out the relevant information.
     if request.method == 'POST':
 
@@ -103,7 +124,7 @@ def user_login(request):
     else:
         # No context variables to pass to the template system, hence the
         # blank dictionary object...
-        return render(request, 'leidos_app/login.html')
+        return render(request, 'leidos_app/login.html', context_dict)
 
 
 @login_required
@@ -221,9 +242,13 @@ def business(request, business_name_slug):
         messages.error(request, f"Business '{business_name_slug}' does not exist")
         return redirect(reverse("leidos_app:homepage"))
 
+    context_dict = {
+        "businesses": get_all_businesses()
+    }
+
     if request.method == 'GET':
         # Retrieve all relevant information for business
-        context_dict = get_business_info(business_name_slug)
+        context_dict.update(get_business_info(business_name_slug))
 
         if context_dict is not None:
 
@@ -283,35 +308,6 @@ def delete_opening_hours(request, hours_pk):
         return redirect(reverse("leidos_app:edit_business", kwargs={"business_name_slug": business_name_slug}))
 
 @login_required
-def register_business(request):
-
-    if not UserProfile.objects.get(user=request.user).is_business_owner:
-        messages.error(request, "You do not have access to this feature")
-        return redirect(reverse("leidos_app:homepage"))
-
-    if request.method == 'GET':
-        return render(request, "leidos_app/register_business.html", {"form":RegisterBusinessForm()})
-
-    if request.method == 'POST':
-        form = RegisterBusinessForm(request.POST)
-
-        if form.is_valid():
-            business_obj = form.save(commit=False)
-
-            print(f"files:{request.FILES}")
-
-            if 'img' in request.FILES:
-                business_obj.img = request.FILES['img']
-
-            business_obj.owner_fk = request.user
-
-            business_obj.save()
-
-            return redirect(reverse("leidos_app:business", kwargs={"business_name_slug": business_obj.slug}))
-        else:
-            return HttpResponse(form.errors)
-
-@login_required
 def edit_business(request, business_name_slug):
 
     if not business_exists(business_name_slug):
@@ -324,10 +320,13 @@ def edit_business(request, business_name_slug):
         messages.error(request, "You do not have access to this feature")
         return redirect(reverse("leidos_app:homepage"))
 
+    context_dict = {
+        "businesses": get_all_businesses()
+    }
 
     if request.method == 'GET':
 
-        context_dict = {"business":business_obj}
+        context_dict.update({"business":business_obj})
 
         edit_business_form = EditBusinessForm(initial={
             "name":business_obj.name,
@@ -424,7 +423,13 @@ def register_business(request):
         return redirect(reverse("leidos_app:homepage"))
 
     if request.method == 'GET':
-        return render(request, "leidos_app/register_business.html", {"form":RegisterBusinessForm()})
+
+        context_dict = {
+            "businesses": get_all_businesses(),
+            "form": RegisterBusinessForm()
+        }
+
+        return render(request, "leidos_app/register_business.html", context_dict)
 
     if request.method == 'POST':
         form = RegisterBusinessForm(request.POST)
@@ -520,3 +525,6 @@ def business_exists(business_name_slug):
         return True
     except:
         return False
+
+
+def get_all_businesses(): return Business.objects.all()
