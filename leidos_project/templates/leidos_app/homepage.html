@@ -2,7 +2,22 @@
 {% load static %}
 
 {% block body_block %}
-<div style="text-align: center;"><h1>LEIDOS</h1></div>
-<div style="text-align: center;"><span>Find a local food place near you</span></div>
-<div style="text-align: center;"><a href="{% url 'leidos_app:homepage' %}">Search!</a></div>
+<div class="">
+    <form class="d-flex " style="margin-left: 40%; margin-right: 40%" action="{% url 'leidos_app:search_business' request.path|url_to_str %}">
+        <input id="tags" class="form-control me-2" type="search" placeholder="Search Business" aria-label="Search" name="business_name">
+        <script>
+            $(function () {
+                var availableTags = [
+                    {% for business in businesses %}
+                    "{{business.name}}",
+                    {% endfor %}
+        ];
+            $("#tags").autocomplete({
+                source: availableTags
+            });
+      } );
+        </script>
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+</div>
 {% endblock %}

@@ -20,4 +20,5 @@ urlpatterns = [
 	path('delete_opening_hours/<int:hours_pk>', views.delete_opening_hours, name="delete_opening_hours"),
 	path('delete_section/<int:section_pk>', views.delete_section, name="delete_section"),
 	path('delete_section_item/<int:item_pk>', views.delete_section_item, name="delete_section_item"),
+	path('search_business/<str:path>', views.search_business, name="search_business")
 ]
