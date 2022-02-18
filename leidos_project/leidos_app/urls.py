@@ -24,4 +24,3 @@ urlpatterns = [
 	path('delete_comment/<int:comment_pk>', views.delete_comment, name="delete_comment"),
 	path('search_business/<str:path>', views.search_business, name="search_business"),
 ]
-]
