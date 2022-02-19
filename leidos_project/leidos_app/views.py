@@ -48,8 +48,6 @@ def user_register(request):
         "businesses": get_all_businesses()
     }
 
-    registered = False
-
     if request.method == "POST":
         user_form = UserForm(request.POST)
         profile_form = UserProfileForm(request.POST)
@@ -85,11 +83,10 @@ def user_register(request):
             return redirect(reverse("leidos_app:register"))
 
     else:
-        user_form = UserForm()
-        profile_form = UserProfileForm()
+        context_dict["user_form"] = UserForm()
+        context_dict["profile_form"] = UserProfileForm()
 
-    return render(request, 'leidos_app/register.html', context=context_dict.update({'user_form': user_form,
-                                                                                    'profile_form': profile_form}))
+    return render(request, 'leidos_app/register.html', context_dict)
 
 
 def user_login(request):
@@ -264,6 +261,10 @@ def business(request, business_name_slug):
 
             if Comment.objects.filter(business_fk=context_dict["business"]).exists():
                 context_dict["comments"] = Comment.objects.filter(business_fk = context_dict["business"])
+
+            if not request.user.is_anonymous:
+                context_dict["is_favorite"] = Favorite.objects.filter(user_fk=request.user,
+                                                                  business_fk=context_dict["business"]).exists()
 
             return render(request, "leidos_app/business.html", context_dict)
         else:

@@ -13,7 +13,7 @@
         
         <div class="table">
             <ul id="horizontal-list">
-                <li><img class="avatar" src="{% static 'images/default_profile.png' %}" alt="profile-image" /></li>
+                <li><img class="avatar" src="{{MEDIA_URL}}{{user.userprofile.profile_pic}}" alt="profile-image" /></li>
                 <li><h2>{{ user.username }}</h2></li>
                 <br>
                 
