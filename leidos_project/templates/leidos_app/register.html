@@ -5,7 +5,7 @@
 <html>
 <head>
     {% block title_block %}
-    Register
+    Sign Up
     {% endblock %}
 </head>
 
@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block body_block %}
-<h1 class="form.h1">Register here!</h1>
+<h1 class="form.h1">Sign Up Here!</h1>
     <div class="container p-4 mt-5" style="width: 75%;">
         <form class="row g-3" method="post" action="{% url 'leidos_app:register' %}" enctype="multipart/form-data">
             {% csrf_token %}

@@ -1,74 +1,135 @@
 {% extends 'leidos_app/base.html' %}
 {% load static %}
+{% load bootstrap_icons %}
 
 {% block title_block %}
 	{{business.name}}
 {% endblock %}
 
 {% block body_block %}
-	
-	<link rel="stylesheet" type="text/css" href="{% static 'business.css' %}"/>
-	
-	<div class="banner-container" >
-		
-		<span class="">
-			{% if business.img %}
-				<img src="{{MEDIA_URL}}{{business.img}}" alt="Banner">
+
+<link rel="stylesheet" type="text/css" href="{% static 'business.css' %}" xmlns="http://www.w3.org/1999/html"/>
+
+	<!-- Business header section -->
+	<div class="container-fluid" style="background-image: url('{{MEDIA_URL}}{{business.img}}')">
+		{% if is_business_owner %}
+
+		<a href="{% url 'leidos_app:edit_business' business.slug %}" style="margin: 10px"
+		   class="btn btn-primary text-start">Edit Business</a>
+
+		{% endif %}
+
+		<div class="row justify-content-center">
+
+			{% if opening_hours %}
+
+				<div class="col-md-9 text-center">
+					<h1 style="font-size: 35px">{{business.name}}</h1>
+					<h4 style="font-size: 25px">{{business.address}}</h4>
+				</div>
+
+				<div class="col-md-3 text-end">
+					{% for hour in opening_hours %}
+					<!-- Optional way to print out opening hours depending on their form -->
+					{% if hour.weekday_from|length > 0 %}
+						<span style="color: limegreen">Open: </span>{{hour.weekday_from}} - {{hour.weekday_to}}: {{hour.from_hour}} - {{hour.to_hour}}
+					{% else %}
+						<span style="color: limegreen">Open: </span>{{hour.weekday_from}}: {{hour.from_hour}} - {{hour.to_hour}}
+					{% endif %}
+					<br>
+					{% endfor %}
+				</div>
+
+			<!-- Center business name and address if no opening hours -->
+			{% else %}
+
+				<div class="col-md-12 text-center">
+					<h1 style="font-size: 35px">{{business.name}}</h1>
+					<h4 style="font-size: 25px">{{business.address}}</h4>
+				</div>
+
 			{% endif %}
-			<div class="business-name">
-			<h1>{{ business.name }}</h1>
-				{% if business.description %}
-					<h4>{{ business.description }}</h4>
-				{% endif %}
-			{% if is_business_owner %}
-				<a href="{% url 'leidos_app:edit_business' business.slug %}">Edit Business Details</a>
-			{% endif %}
-			</div>
-			<h3><p style="text-align:left;">{{ business.address }}
-			{% for hour in opening_hours %}
-				{% if hour.weekday_to|length > 0 %}
-					<span style="float:right;
-						">Open : {{ hour.weekday_from }} - {{ hour.weekday_to }}  {{ hour.from_hour}} - {{ hour.to_hour }}</span>
-				{% else %}
-					<span style="float:right;
-						">Open : {{ hour.weekday_from }}  {{ hour.from_hour}} - {{ hour.to_hour }}</span>
-				{% endif %}
-				{% endfor %}
-   			 </p></h3>
-		</span>
-		
+
+		</div>
 	</div>
-	
-	<br>
-	
-	<nav id ="categories">
-		<ul>
+
+	<style>
+		.trs {
+			background-color: transparent;
+			border-color: transparent;
+			font-size: 25px;
+		}
+	</style>
+	<!-- Create navigation bar containing section names as buttons with scrollIntoView on click -->
+	<nav class="container-flex" style="padding: 10px; display: block; background-color: #5A9BD5">
+		<div class="col-md-12 text-center">
 			{% for section in sections %}
-				<li>
-					<a onclick=document.getElementById("{{ section.0.name }}").scrollIntoView(true) href="#mains">{{ section.0.name }}</a>
-				</li>
+			<button class="btn btn-primary btn-lg trs" style="margin-right: 5%"
+					onclick=document.getElementById("{{ section.0.name }}").scrollIntoView(true)>{{ section.0.name }}</button>
 			{% endfor %}
-		</ul>
+			<button class="btn btn-primary btn-lg trs" onclick=document.getElementById("comments").scrollIntoView(true)>Comments</button>
+
+			{% if not user.is_anonymous %}
+				{% if user != business.owner_fk %}
+					{% if not is_favorite %}
+						<a class="btn btn-success btn-lg trs" style="position:absolute; right: 10px;"
+						   href="{% url 'leidos_app:add_favorite' business.slug %}" data-toggle="tooltip" title="Add Favorite">
+							{% bs_icon 'bookmark-heart' size='1.5em' %}</a>
+					{% else %}
+						<a class="btn btn-danger btn-lg trs" style="position:absolute; right: 10px;"
+						   href="{% url 'leidos_app:remove_favorite' business.slug %}" data-toggle="tooltip" title="Remove Favorite">
+							{% bs_icon 'bookmark-heart-fill' size='1.5em' %}</a>
+					{% endif %}
+				{% endif %}
+			{% endif %}
+			<script>
+			$(document).ready(function(){
+			  $('[data-toggle="tooltip"]').tooltip();
+			});
+			</script>
+		</div>
 	</nav>
 	
 	<br>
 
-
+<!-- Create section containing list of associated items -->
 {% for section in sections %}
-	<div id="{{ section.0.name }}" class="cat-name">
+	<div id="{{section.0.name}}" class="container-flex" style="background-color: #5A9BD5; padding: 15px">
 		<span><b>{{ section.0.name }}</b></span>
 	</div>
-	
-	<br>
-	
-	<div class="tiles">
-	{% for item in section.1 %}
-		{% include 'includes/item_card.html' %}
+
+<!-- List out all items using item_card.html -->
+	<div class="tiles" style="">
+		{% for item in section.1 %}
+			{% include 'includes/item_card.html' %}
 		{% endfor %}
 	</div>
 {% endfor %}
 
-	
+<!-- Create comment sections with "Leave a Comment" modal button for authenticated non-owner users -->
+<div id="comments" class="container-flex" style="background-color: #5A9BD5; padding: 10px">
+	<span style="padding-right: 39.23%"><b>Comments</b></span>
+	{% if not user.is_anonymous and user.is_authenticated and user != business.owner_fk %}
+		{% include 'includes/add_comment_modal.html' %}
+	{% endif %}
+</div>
+
+
+	<style>
+		.no-gutter > [class*="col-"]{
+			padding-right: 5%;
+			padding-left: 5%;
+		}
+	</style>
+
+<!-- List out all comments using comment_container.html -->
+<div class="container-flex row no-gutter">
+{% if comments %}
+	{% for comment in comments %}
+		{% include 'includes/comment_container.html' %}
+	{% endfor %}
+{% endif %}
+</div>
 {% endblock %}
 
 
