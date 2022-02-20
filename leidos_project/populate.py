@@ -19,9 +19,9 @@ def populate():
               'description': 'i dont have a business', 'is_business_owner': 'False'}]
 
     businesses = [{'owner': 'ben', 'name':'Bobs Burgers', 'address': 'University Avenue, G12 8QW', 
-                    'img': 'media/business_images/business_default.png'},
+                    'img': 'business_images/business_default.png'},
                     {'owner': 'james', 'name':'James Burgers', 'address': '132 University Pl, Glasgow G12 8TA', 
-                    'img': 'media/business_images/business_default.png'}]
+                    'img': 'business_images/business_default.png'}]
 
     menuSections = [{'business': 'Bobs Burgers', 'name': 'Mains'},
                     {'business': 'Bobs Burgers', 'name': 'Sides'},
