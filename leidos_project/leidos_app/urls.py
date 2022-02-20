@@ -20,5 +20,9 @@ urlpatterns = [
 	path('delete_opening_hours/<int:hours_pk>', views.delete_opening_hours, name="delete_opening_hours"),
 	path('delete_section/<int:section_pk>', views.delete_section, name="delete_section"),
 	path('delete_section_item/<int:item_pk>', views.delete_section_item, name="delete_section_item"),
-	path('search_business/<str:path>', views.search_business, name="search_business")
+	path('business/<slug:business_name_slug>/add_comment/', views.add_comment, name="add_comment"),
+	path('delete_comment/<int:comment_pk>', views.delete_comment, name="delete_comment"),
+	path('search_business/<str:path>', views.search_business, name="search_business"),
+	path('add_favorite/<slug:business_name_slug>', views.add_favorite, name="add_favorite"),
+	path('remove_favorite/<slug:business_name_slug>', views.remove_favorite, name="remove_favorite"),
 ]
