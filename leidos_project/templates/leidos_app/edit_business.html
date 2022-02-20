@@ -92,32 +92,36 @@ Edit Business Details
     </div>
 	<br />
 
-<nav id ="categories">
-		<ul>
+	<style>
+		.trs {
+			background-color: transparent;
+			border-color: transparent;
+			font-size: 25px
+		}
+	</style>
+	<!-- Create navigation bar containing section names as buttons with scrollIntoView on click -->
+	<nav class="container-flex" style="padding: 10px; display: block; background-color: #5A9BD5">
+		<div class="col-md-12 text-center">
 			{% for section in sections %}
-				<li>
-					<a onclick=document.getElementById("{{ section.0.name }}").scrollIntoView(true) href="#mains">{{ section.0.name }}</a>
-				</li>
+			<button class="btn btn-primary btn-lg trs" style="margin-right: 5%"
+					onclick=document.getElementById("{{ section.0.name }}").scrollIntoView(true)>{{ section.0.name }}</button>
 			{% endfor %}
-		</ul>
+		</div>
 	</nav>
 
 	<br>
 
+	{% for section in sections %}
+		<div id="{{section.0.name}}" class="container-flex" style="background-color: #5A9BD5; padding: 15px">
+			<span><b>{{ section.0.name }}</b></span>
+			{% include 'includes/delete_section_modal.html' %}
+		</div>
 
-{% for section in sections %}
-	<div id="{{ section.0.name }}" class="cat-name">
-		<span><b>{{ section.0.name }}</b></span>
-		{% include 'includes/delete_section_modal.html' %}
-	</div>
-
-	<br>
-
-	<div class="tiles">
-	{% for item in section.1 %}
-		{% include 'includes/item_card.html' %}
+		<div class="tiles">
+			{% for item in section.1 %}
+				{% include 'includes/item_card.html' %}
+			{% endfor %}
+		</div>
 	{% endfor %}
-	</div>
-{% endfor %}
 
 {% endblock %}

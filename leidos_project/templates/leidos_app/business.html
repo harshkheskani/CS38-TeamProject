@@ -57,6 +57,7 @@
 		.trs {
 			background-color: transparent;
 			border-color: transparent;
+			font-size: 25px;
 		}
 	</style>
 	<!-- Create navigation bar containing section names as buttons with scrollIntoView on click -->
@@ -71,7 +72,7 @@
 			{% if not user.is_anonymous %}
 				{% if user != business.owner_fk %}
 					{% if not is_favorite %}
-						<a class="btn btn-primary btn-lg trs" style="position:absolute; right: 10px;"
+						<a class="btn btn-success btn-lg trs" style="position:absolute; right: 10px;"
 						   href="{% url 'leidos_app:add_favorite' business.slug %}" data-toggle="tooltip" title="Add Favorite">
 							{% bs_icon 'bookmark-heart' size='1.5em' %}</a>
 					{% else %}
@@ -99,8 +100,8 @@
 
 <!-- List out all items using item_card.html -->
 	<div class="tiles" style="">
-	{% for item in section.1 %}
-		{% include 'includes/item_card.html' %}
+		{% for item in section.1 %}
+			{% include 'includes/item_card.html' %}
 		{% endfor %}
 	</div>
 {% endfor %}
