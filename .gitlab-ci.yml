@@ -1,6 +1,7 @@
 stages:
   - test
   - deploy
+  - post_deploy
 
 test:
   image: python:3.8.3
@@ -35,3 +36,11 @@ deploy:
     url: $HEROKU_APP_HOST
   only:
     - deploy
+
+post_production:
+  stage: post_deploy
+  script:
+  - heroku run python manage.py migrate -a leidos_app
+  - heroku run python populate.py
+  only:
+  - deploy
