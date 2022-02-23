@@ -13,10 +13,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 import os
 import django_heroku
-<<<<<<< HEAD
-=======
 from django.contrib.messages import constants as messages
->>>>>>> origin/master
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -148,9 +145,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-<<<<<<< HEAD
 django_heroku.settings(locals())
-=======
+
 MESSAGE_TAGS = {
         messages.DEBUG: 'alert-secondary',
         messages.INFO: 'alert-info',
@@ -158,4 +154,4 @@ MESSAGE_TAGS = {
         messages.WARNING: 'alert-warning',
         messages.ERROR: 'alert-danger',
  }
->>>>>>> origin/master
+
