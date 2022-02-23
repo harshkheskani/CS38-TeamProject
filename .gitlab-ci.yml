@@ -15,6 +15,7 @@ test:
   script:
     - python manage.py migrate
     - python manage.py collectstatic --noinput
+    - python populate.py
   only:
     - deploy
 
