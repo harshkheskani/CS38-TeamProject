@@ -1,6 +1,2 @@
 release: python manage.py migrate
-<<<<<<< HEAD
 web: gunicorn leidos_project.wsgi --log-file -
-=======
-web: gunicorn leidos_project.wsgi --log-file -
->>>>>>> origin/master
