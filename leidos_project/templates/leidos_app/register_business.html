@@ -7,9 +7,14 @@ Register Your Business
 
 {% block head_block %}
         <link rel="stylesheet" href="{% static 'form.css' %}">
+
 {% endblock %}
 
 {% block body_block %}
+<script  
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOLE9zYh4J-uU_dO_iykrtcu0YOL3f7_Y&callback=initialize&libraries=places&v=weekly"
+async>
+</script>
 
      <div class="form.css">
         <h1 class="form.h1">Register Business Here!</h1>
@@ -22,8 +27,31 @@ Register Your Business
 				{% csrf_token %}
 				{{ form.as_p }}
 
-				<button type="submit">REGISTER</button>
+				<button onclick=myFunction()>REGISTER</button>
         </form>
     </div>
+
+	<script>
+		function myFunction() {
+		  alert(place.geometry.location.toString());
+		}
+		</script>
+
+	<script>
+        function initialize() {
+        	var input = document.getElementById('id_address');
+        	var autocomplete = new google.maps.places.Autocomplete(input, { types: ["geocode"] });
+			autocomplete.setFields(["address_component","geometry"]);
+        	autocomplete.addListener('place_changed', function() {
+    			console.log("lat=" + autocomplete.getPlace().geometry.location.lat());
+				console.log("long=" + autocomplete.getPlace().geometry.location.lng());
+    			console.log(autocomplete.getPlace().geometry.location.toUrlValue(6));
+				document.getElementById('id_lat').value = autocomplete.getPlace().geometry.location.lat()
+				document.getElementById('id_long').value = autocomplete.getPlace().geometry.location.lng()
+  			});
+		}
+
+		google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
 
 {% endblock %}
