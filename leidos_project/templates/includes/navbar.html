@@ -1,0 +1,84 @@
+{% load static %}
+{% load bootstrap_icons %}
+
+<style>
+  .white{
+    color: white;
+  }
+</style>
+
+<nav class="navbar navbar-expand-lg" style="background-color: #71a4f0">
+  <div class="container-fluid">
+    <a class="navbar-brand white" href="{% url 'leidos_app:homepage' %}">
+      Roll-Vans
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon">{% bs_icon 'arrow-down' color="white" size="1.2em" %}</span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active white" aria-current="page" href="{% url 'leidos_app:homepage' %}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link white" href="#">Map</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Dropdown
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="#">My Favorites</a></li>
+            {% if not user.is_anonymous and user.is_authenticated and user.userprofile.is_business_owner %}
+            <li><a class="dropdown-item" href="#">My Businesses</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'leidos_app:register_business' %}">Register New Business</a></li>
+            {% endif %}
+          </ul>
+        </li>
+      </ul>
+
+      {% with request.resolver_match.view_name as view_name %}
+      {% if "leidos_app:homepage" != view_name and view_name != "homepage" %}
+      <form class="d-xl-flex" style="padding-right: 20px" action="{% url 'leidos_app:search_business' request.path|url_to_str %}">
+        <input id="tags" class="form-control me-2" type="search" placeholder="Search Business" aria-label="Search" name="business_name">
+        <script>
+            $(function () {
+                var availableTags = [
+                    {% for business in businesses %}
+                    "{{business.name}}",
+                    {% endfor %}
+        ];
+            $("#tags").autocomplete({
+                source: availableTags
+            });
+      } );
+        </script>
+        <button class="btn btn-outline-success white" type="submit">Search</button>
+      </form>
+      {% endif %}
+      {% endwith %}
+
+
+      <ul class="nav navbar-nav navbar-right">
+        {% if user.is_anonymous or not user.is_authenticated %}
+        <li class="nav-item">
+            <a class="nav-link white" href="{% url 'leidos_app:login' %}">Login</a>
+        </li>
+        <li class="nav-item">
+           <a class="nav-link white" href="{% url 'leidos_app:register' %}">Sign Up</a>
+        </li>
+
+        {% else %}
+        <li class="nav-item">
+             <a class="nav-link white" href="{% url 'leidos_app:profile' %}">Profile</a>
+        </li>
+        <li class="nav-item">
+             <a class="nav-link white" href="{% url 'leidos_app:logout' %}">Logout</a>
+        </li>
+        {% endif %}
+
+      </ul>
+    </div>
+  </div>
+</nav>

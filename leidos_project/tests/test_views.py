@@ -72,7 +72,8 @@ class TestBusinessView(TestCase):
         self.assertEquals(response.context['sections'][0][1][0].price, 10)
 
 
-class TestRegisterView(TestCase):
+class TestRegisterBusinessView(TestCase):
+
 
     def setUp(self):
         self.client = Client()
@@ -121,3 +122,39 @@ class TestRegisterView(TestCase):
         self.assertEquals(response.context["business"].address, "test_address")
         self.assertEquals(response.context["business"].description, "test_desc")
         self.assertFalse(response.context["business"].img) # Check for no image
+
+class TestEditBusinessView(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.edit_business_url = reverse("leidos_app:edit_business", args=["test-business"])
+
+        user = User.objects.create_user(username="test_profile")
+        user.set_password("test_profile")
+        user.save()
+
+        self.profile = UserProfile.objects.create(user=user, is_business_owner=True)
+        self.profile.save()
+
+        self.business_obj = Business.objects.create(owner_fk=user, name=test_business_name, address=test_address)
+        self.business_obj.save()
+
+
+    def test_edit_business_GET_uses_correct_template(self):
+        self.client.login(username="test_profile", password="test_profile")
+
+        response = self.client.get(self.edit_business_url)
+
+        self.assertEquals(response.status_code, 200)
+
+        # Check if correct template is used
+        self.assertTemplateUsed(response, "leidos_app/edit_business.html")
+
+
+    def test_edit_business_GET_displays_instantiated_form(self):
+        self.client.login(username="test_profile", password="test_profile")
+
+        response = self.client.get(self.edit_business_url)
+
+        self.assertEquals(response.status_code, 200)
+

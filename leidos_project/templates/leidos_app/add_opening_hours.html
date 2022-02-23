@@ -1,0 +1,42 @@
+{% extends 'leidos_app/base.html' %}
+{% load static %}
+
+{% block title_block %}
+Add New Section
+{% endblock %}
+
+{% block body_block %}
+<style>
+    #content{
+        margin-left: 50px;
+    }
+</style>
+
+<h1 id="content">Edit Opening Times</h1>
+{% if form %}
+    <div id="content">
+    <form method="post" action="{% url 'leidos_app:add_opening_hours' business_name_slug %}"
+          enctype="multipart/form-data" class="auto-form">
+
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+    </form>
+{% endif %}
+
+{% if existing_hours %}
+    {% for hour in existing_hours %}
+        <ul>
+        {% if hour.weekday_to|length > 0 %}
+
+            <li style="float:right;
+					">Open : {{ hour.weekday_from }} - {{ hour.weekday_to }}  {{ hour.from_hour}} - {{ hour.to_hour }}</li>
+        {% else %}
+            <li style="float:right;
+					">Open : {{ hour.weekday_from }}  {{ hour.from_hour}} - {{ hour.to_hour }}</li>
+        {% endif %}
+        </ul>
+    {% endfor %}
+{% endif %}
+</div>
+{% endblock %}

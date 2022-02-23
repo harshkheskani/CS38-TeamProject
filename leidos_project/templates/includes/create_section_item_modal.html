@@ -1,0 +1,55 @@
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#sectionItemModal">
+  Create Item
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="sectionItemModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="sectionItemModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="sectionItemModalLabel">Create New Item</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'leidos_app:create_section_item' business.slug %}"
+          enctype="multipart/form-data" class="row g-3">
+            {% if section_item_form %}
+            {% csrf_token %}
+
+                <div class="col-md-12" aria-required="true">
+
+                    <label for="id_name" class="form-label">Name</label>
+                    {{ section_item_form.name }}
+
+                    <label for="id_description" class="form-label" >Description</label>
+                    {{ section_item_form.description }}
+
+                    <label for="id_img" class="form-label">Item Image</label>
+                    {{ section_item_form.img }}
+
+                </div>
+
+                <div class="col-md-6" aria-required="true">
+
+                    <label for="id_price" class="form-label">Item Price</label>
+                    {{ section_item_form.price }}
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <label for="id_sections" class="form-label">Choose Item Section</label>
+                    {{ section_item_form.sections }}
+
+                </div>
+            
+            {% endif %}
+          <button type="submit" class="btn btn-primary">Create</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

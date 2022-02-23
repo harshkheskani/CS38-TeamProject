@@ -1,0 +1,26 @@
+{% extends 'leidos_app/base.html' %}
+{% load static %}
+
+{% block title_block %}
+Add New Section
+{% endblock %}
+
+{% block body_block %}
+<style>
+    #content{
+        margin-left: 50px;
+    }
+</style>
+<h1 id="content">Add New Section</h1>
+{% if form %}
+    <div id="content">
+    <form method="post" action="{% url 'leidos_app:create_section' slug %}"
+          enctype="multipart/form-data" class="auto-form" >
+
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+    </form>
+    </div>
+{% endif %}
+{% endblock %}

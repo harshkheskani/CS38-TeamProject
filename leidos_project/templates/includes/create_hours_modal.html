@@ -1,0 +1,30 @@
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#hoursModal">
+  Add Hours
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="hoursModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="hoursModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="hoursModalLabel">Add Opening Hours</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'leidos_app:add_opening_hours' business.slug %}"
+          enctype="multipart/form-data" class="auto-form">
+            <div class="form-control">
+            {% if hours_form %}
+            {% csrf_token %}
+            {{hours_form.as_p}}
+            {% endif %}
+            </div>
+          <button type="submit" class="btn btn-primary">Create</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

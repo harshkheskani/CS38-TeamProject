@@ -20,7 +20,7 @@ WEEKDAYS = [
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_pic = models.ImageField(upload_to="profile_images", blank=True, default="profile_images/default.png")
-    description = models.TextField(max_length=1024, default="")
+    description = models.TextField(max_length=1024, blank=True, default="")
 
     # boolean flag for identifying business owners
     is_business_owner = models.BooleanField(default=False)
@@ -53,7 +53,7 @@ class Business(models.Model):
 
 class OpeningHours(models.Model):
     business_fk = models.ForeignKey(Business, on_delete=models.CASCADE)
-    weekday_from = models.CharField(max_length=10, choices=WEEKDAYS, unique=True)
+    weekday_from = models.CharField(max_length=10, choices=WEEKDAYS, unique=False)
     weekday_to = models.CharField(max_length=10, choices=WEEKDAYS, blank=True)
     from_hour = models.CharField(max_length=5, choices=HOUR_OF_DAY_24)
     to_hour = models.CharField(max_length=5, choices=HOUR_OF_DAY_24)
@@ -74,8 +74,8 @@ class SectionItem(models.Model):
     section_fk = models.ForeignKey(MenuSection, on_delete=models.CASCADE)
 
     name = models.CharField(max_length=128)
-    description = models.TextField(max_length=128, default="")
-    price = models.IntegerField()
+    description = models.TextField(max_length=128, blank=True, default="")
+    price = models.FloatField()
     img = models.ImageField(upload_to="item_images", blank=True)
 
     def __str__(self):
@@ -87,6 +87,7 @@ class Comment(models.Model):
     business_fk = models.ForeignKey(Business, on_delete=models.CASCADE)
 
     content = models.TextField(max_length=1024, blank=False)
+    date_posted = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.content

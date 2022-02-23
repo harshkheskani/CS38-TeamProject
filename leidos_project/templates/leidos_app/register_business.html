@@ -10,20 +10,50 @@ Register Your Business
 {% endblock %}
 
 {% block body_block %}
+<style>
+	#content{
+    margin-left: 50px;
+	}
 
-     <div class="form.css">
-        <h1 class="form.h1">Register Business Here!</h1>
+	#head{
+    text-align: center;
+	}
+</style>
+     <div id="content">
+        <h1 id="head">Register Business Here!</h1>
+		 <div class="container p-3 mt-5">
        <form
 			id="form"
 			method="post"
 			action="{% url 'leidos_app:register_business' %}"
 			enctype="multipart/form-data"
-			class="auto-form">
+			class="row g-3">
 				{% csrf_token %}
-				{{ form.as_p }}
 
-				<button type="submit">REGISTER</button>
+				<div class="col-md-6" aria-required="true">
+
+                    <label for="id_name" class="form-label" >Business Name</label>
+                    {{ form.name }}
+
+                    <label for="id_address" class="form-label" >Business Address</label>
+                    {{ form.address }}
+
+                    <label for="id_img" class="form-label" >Business Cover Image</label>
+                    {{ form.img }}
+
+                </div>
+
+		   		<div class="col-md-6" aria-required="true">
+
+                    <label for="id_description" class="form-label" >Business Description</label>
+                    {{ form.description }}
+
+                </div>
+
+
+				<button class="btn btn-primary" type="submit">Register</button>
         </form>
+		 </div>
     </div>
 
 {% endblock %}
