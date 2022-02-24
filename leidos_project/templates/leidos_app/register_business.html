@@ -27,15 +27,9 @@ async>
 				{% csrf_token %}
 				{{ form.as_p }}
 
-				<button onclick=myFunction()>REGISTER</button>
+				<button class="btn btn-primary" type="submit">Register</button>
         </form>
     </div>
-
-	<script>
-		function myFunction() {
-		  alert(place.geometry.location.toString());
-		}
-		</script>
 
 	<script>
         function initialize() {
