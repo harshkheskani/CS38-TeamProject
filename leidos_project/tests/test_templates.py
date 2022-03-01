@@ -98,3 +98,16 @@ class TestRegisterBusinessTemplate(TestCase):
         self.assertRedirects(response2, "/leidos_app/homepage/") # Non-business owner should be redirected to homepage
 
         # TODO figure out how to check for redirected content
+
+
+# class TestRegisterTemplate(TestCase):
+    
+#     def setUp(self):
+#         self.client = Client()
+#         self.register_url = reverse("leidos_app:register")
+#         self.username = "test_user"
+#         self.password = "test_password"
+#         self.is_business_owner = "Yes"
+    
+#     def test_register_page(self):
+#         response = self.client.get("leidos")
