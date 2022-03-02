@@ -58,7 +58,6 @@ class OpeningHours(models.Model):
     from_hour = models.CharField(max_length=5, choices=HOUR_OF_DAY_24)
     to_hour = models.CharField(max_length=5, choices=HOUR_OF_DAY_24)
 
-
 class MenuSection(models.Model):
 
     business_fk = models.ForeignKey(Business, on_delete=models.CASCADE)
