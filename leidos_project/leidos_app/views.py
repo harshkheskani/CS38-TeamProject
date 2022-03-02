@@ -1,3 +1,4 @@
+import re
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -222,6 +223,8 @@ def register_business(request):
         if form.is_valid():
             business_obj = form.save(commit=False)
 
+
+            print(request.POST["address"], "------" ,request.POST["lat"], "------", request.POST["long"])
             print(f"files:{request.FILES}")
 
             if 'img' in request.FILES:
