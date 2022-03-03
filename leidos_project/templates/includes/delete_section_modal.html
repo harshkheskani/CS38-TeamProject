@@ -1,6 +1,9 @@
+{% load bootstrap_icons %}
+
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delsectionModal{{section.0.pk}}">
-  Delete Section
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delsectionModal{{section.0.pk}}"
+        style="background-color: transparent; border-color: transparent; margin-bottom: 8px">
+  {% bs_icon 'trash3' size="1.3em"%}
 </button>
 
 <!-- Modal -->
