@@ -6,7 +6,7 @@ from leidos_app.forms import *
 from django.contrib import messages
 from django.urls import reverse
 from django.utils.text import slugify
-
+from django import forms
 
 def homepage(request):
 
@@ -39,8 +39,51 @@ def profile(request):
     context_dict = {
         "businesses": get_all_businesses()
     }
-
+    
+    context_dict["owned_businesses"] = Business.objects.filter(owner_fk=request.user)
+    context_dict["favorites"] = Favorite.objects.filter(user_fk=request.user)
+    context_dict["comments"] = Comment.objects.filter(user_fk=request.user).order_by("-date_posted")
+    context_dict["edit_picture_form"] = ProfilePictureForm(initial={"profile_pic":request.user.userprofile.profile_pic})
+    context_dict["edit_description_form"] = ProfileDescriptionForm(initial={"description": request.user.userprofile.description})
+    
     return render(request, 'leidos_app/profile.html', context_dict)
+
+def save_profile_pic(request):
+
+    prof = UserProfile.objects.get(user=request.user)
+
+    form = ProfilePictureForm(request.POST, instance=prof)
+    if form.is_valid():
+
+        profile_model = form.save(commit=False)
+
+        if 'profile_pic' in request.FILES:
+            profile_model.profile_pic = request.FILES['profile_pic']
+        else:
+            profile_model.profile_pic = 'profile_images/default.png'
+
+        profile_model.save()
+
+        messages.success(request, "Profile picture changed")
+        return redirect(reverse('leidos_app:profile'))
+
+    else:
+        messages.warning(request, form.errors)
+        return redirect(reverse('leidos_app:profile'))
+            
+
+def save_profile_desc(request):
+
+    form = ProfileDescriptionForm(request.POST, instance=request.user.userprofile)
+
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Description saved")
+        return redirect(reverse("leidos_app:profile"))
+    else:
+        messages.error(request, form.errors)
+        return redirect(reverse("leidos_app:profile"))
+
 
 def user_register(request):
 
