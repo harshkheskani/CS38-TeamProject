@@ -39,13 +39,13 @@ def profile(request):
     context_dict = {
         "businesses": get_all_businesses()
     }
-    
+
     context_dict["owned_businesses"] = Business.objects.filter(owner_fk=request.user)
     context_dict["favorites"] = Favorite.objects.filter(user_fk=request.user)
     context_dict["comments"] = Comment.objects.filter(user_fk=request.user).order_by("-date_posted")
     context_dict["edit_picture_form"] = ProfilePictureForm(initial={"profile_pic":request.user.userprofile.profile_pic})
     context_dict["edit_description_form"] = ProfileDescriptionForm(initial={"description": request.user.userprofile.description})
-    
+
     return render(request, 'leidos_app/profile.html', context_dict)
 
 def save_profile_pic(request):
@@ -70,7 +70,7 @@ def save_profile_pic(request):
     else:
         messages.warning(request, form.errors)
         return redirect(reverse('leidos_app:profile'))
-            
+
 
 def save_profile_desc(request):
 
