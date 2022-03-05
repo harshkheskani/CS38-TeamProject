@@ -179,6 +179,10 @@ def create_section_item(request, business_name_slug):
 
 @login_required
 def delete_section_item(request, item_pk):
+
+    if not SectionItem.objects.filter(pk=item_pk).exists():
+        return redirect("leidos_app:homepage")
+
     if request.user != SectionItem.objects.get(pk=item_pk).section_fk.business_fk.owner_fk and not request.user.is_superuser:
         messages.error(request, "You do not have access to this feature")
         return redirect("leidos_app:homepage")
@@ -222,6 +226,9 @@ def create_section(request, business_name_slug):
 
 @login_required
 def delete_section(request, section_pk):
+
+    if not MenuSection.objects.filter(pk=section_pk).exists():
+        return redirect("leidos_app:homepage")
 
     if request.user != MenuSection.objects.get(pk=section_pk).business_fk.owner_fk and not request.user.is_superuser:
         messages.error(request, "You do not have access to this feature")
@@ -303,6 +310,9 @@ def add_opening_hours(request, business_name_slug):
 
 @login_required
 def delete_opening_hours(request, hours_pk):
+
+    if not OpeningHours.objects.filter(pk=hours_pk).exists():
+        return redirect("leidos_app:homepage")
 
     if request.user != OpeningHours.objects.get(pk=hours_pk).business_fk.owner_fk and not request.user.is_superuser:
         messages.error(request, "You do not have access to this feature")
@@ -396,6 +406,12 @@ def edit_business(request, business_name_slug):
 
 @login_required
 def save_business_edit(request, business_name_slug):
+
+    if request.user != business_obj.owner_fk and not request.user.is_superuser:
+        messages.error(request, "You do not have access to this feature")
+        return redirect(reverse("leidos_app:homepage"))
+
+
     if request.method == 'POST':
         edit_form = EditBusinessForm(request.POST, instance=Business.objects.get(slug=business_name_slug))
 
@@ -414,6 +430,11 @@ def save_business_edit(request, business_name_slug):
 
 @login_required
 def save_opening_hours_edit(request, hours_pk):
+
+    if request.user != business_obj.owner_fk and not request.user.is_superuser:
+        messages.error(request, "You do not have access to this feature")
+        return redirect(reverse("leidos_app:homepage"))
+
     if request.method == 'POST':
         hours = OpeningHours.objects.get(pk=hours_pk)
         edit_form = EditOpeningHours(request.POST, instance=hours)
@@ -519,6 +540,9 @@ def add_comment(request, business_name_slug):
         return HttpResponse(form.errors)
 
 def delete_comment(request, comment_pk):
+
+    if not Comment.objects.filter(pk=comment_pk).exists():
+        return redirect("leidos_app:homepage")
 
     if request.user != Comment.objects.get(pk=comment_pk).user_fk and not request.user.is_superuser:
         messages.error(request, "You do not have access to this feature")
