@@ -1,0 +1,30 @@
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delsectionModal{{section.0.pk}}">
+  Delete Section
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="delsectionModal{{section.0.pk}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="delsectionModalLabel{{section.0.pk}}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="delsectionModalLabel{{section.0.pk}}">Delete Section</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="get" action="{% url 'leidos_app:delete_section' section.0.pk %}"
+          enctype="multipart/form-data" class="auto-form">
+          {% if section.1|length > 0 %}
+          Are you sure you want to delete this section? {{section.1|length}} associated item(s) will be deleted as well.
+          {% else %}
+          Are you sure you want to delete this section?
+          {% endif %}
+            <br/>
+          <button type="submit" class="btn btn-danger">Delete</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -106,4 +106,22 @@
         }
 
       </script>
+<div class="">
+    <form class="d-flex " style="margin-left: 40%; margin-right: 40%" action="{% url 'leidos_app:search_business' request.path|url_to_str %}">
+        <input id="tags" class="form-control me-2" type="search" placeholder="Search Business" aria-label="Search" name="business_name">
+        <script>
+            $(function () {
+                var availableTags = [
+                    {% for business in businesses %}
+                    "{{business.name}}",
+                    {% endfor %}
+        ];
+            $("#tags").autocomplete({
+                source: availableTags
+            });
+      } );
+        </script>
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+</div>
 {% endblock %}
