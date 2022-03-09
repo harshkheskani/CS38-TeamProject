@@ -85,9 +85,9 @@
 }
     </script>
 
-    {% endblock %}
+{% endblock %}
 
-    {% block body_block %}
+{% block body_block %}
         <div style="text-align: center;"><span>Find a local food place near you</span></div>
         <input
           id="pac-input"
@@ -100,10 +100,10 @@
         <script  
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOLE9zYh4J-uU_dO_iykrtcu0YOL3f7_Y&callback=initAutocomplete&libraries=places&v=weekly"
         async>
-         {% for b in businesses %}
-          var coords = { lat: {{b.lat}}, lng: {{b.long}} };
-          addMarker(coords);
-        {% endfor %}
-    
+
+        function loadBusinesses(){
+          {% for b in businesses %}
+        }
+
       </script>
 {% endblock %}
