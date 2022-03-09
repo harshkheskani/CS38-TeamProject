@@ -8,6 +8,9 @@ test:
   before_script:
     - cd leidos_project
     - pip install -r requirements.txt
+    - python manage.py makemigrations
+    - python manage.py migrate
+    - python manage.py test
 
   when: on_success
   tags:
