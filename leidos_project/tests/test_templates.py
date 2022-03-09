@@ -1,3 +1,5 @@
+from msilib.schema import Class
+from urllib import response
 from django.test import TestCase, Client
 from django.urls import resolve
 from django.urls import reverse
@@ -98,3 +100,85 @@ class TestRegisterBusinessTemplate(TestCase):
         self.assertRedirects(response2, "/leidos_app/homepage/") # Non-business owner should be redirected to homepage
 
         # TODO figure out how to check for redirected content
+
+class TestRegisterTemplate(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.register_url = reverse("leidos_app:register")
+
+    def test_register_template_displays_form(self):
+        response = self.client.get(self.register_url)
+
+        self.assertEquals(response.status_code, 200)
+
+        self.assertContains(response, "username")
+        self.assertContains(response, "password")
+        self.assertContains(response, "is_business_owner")
+        self.assertContains(response, "profile_pic")
+
+
+class TestLoginTemplate(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.login_url = reverse("leidos_app:login")
+
+    def test_login_template_displays_form(self):
+        response = self.client.get(self.login_url)
+
+        self.assertEquals(response.status_code, 200)
+
+        self.assertContains(response, "username")
+        self.assertContains(response, "password")
+
+
+class TestEditBusinessTemplate(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.edit_business_url = reverse("leidos_app:edit_business", args=["test-business"])
+
+        user = User.objects.create_user(username="test_profile")
+        user.set_password("test_profile")
+        user.save()
+
+        self.test_profile = UserProfile.objects.create(user=user, is_business_owner=True)
+        self.test_business = Business.objects.create(name=test_business_name, owner_fk=self.test_profile.user,
+                                                     address=test_address)
+
+        self.menu_section = MenuSection.objects.create(business_fk=self.test_business,name="test_section")
+
+    def test_edit_opening_hours_form_displays(self):
+        self.client.login(username="test_profile", password="test_profile")
+
+        response = self.client.get(self.edit_business_url)
+
+        self.assertEquals(response.status_code, 200)
+
+        self.assertContains(response, "weekday_from")
+        self.assertContains(response, "weekday_to")
+        self.assertContains(response, "from_hour")
+        self.assertContains(response, "to_hour")
+    
+    def test_create_section_form_displays(self):
+        self.client.login(username="test_profile", password="test_profile")
+
+        response = self.client.get(self.edit_business_url)
+
+        self.assertEquals(response.status_code, 200)
+
+        self.assertContains(response, "name")
+    
+    def test_add_item_form_displays(self):
+        self.client.login(username="test_profile", password="test_profile")
+
+        response =  self.client.get(self.edit_business_url)
+
+        self.assertEquals(response.status_code, 200)
+
+        self.assertContains(response, "name")
+        self.assertContains(response, "description")
+        self.assertContains(response, "img")
+        self.assertContains(response, "price")
+
+
+
+

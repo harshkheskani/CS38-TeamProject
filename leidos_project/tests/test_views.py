@@ -1,3 +1,6 @@
+from multiprocessing import context
+from re import T
+from urllib import response
 from django.test import TestCase, Client
 from django.urls import resolve
 from django.urls import reverse
@@ -157,4 +160,56 @@ class TestEditBusinessView(TestCase):
         response = self.client.get(self.edit_business_url)
 
         self.assertEquals(response.status_code, 200)
+
+class TestLoginView(TestCase):
+
+    def setUp(self):
+        self.client= Client()
+        self.login_url = reverse('leidos_app:login')
+
+        user = User.objects.create_user(username="test_user")
+        user.set_password("test_pass")
+        user.save()
+
+        self.profile = UserProfile.objects.create(user=user, is_business_owner=False)
+        self.profile.save()
+
+    def test_login_POST_logs_in(self):
+        context_dict = {}
+        context_dict['username'] = "test_user"
+        context_dict['password'] = "test_pass"
+        response = self.client.post('leidos_app/login.html', context_dict, follow=True)
+
+        # Check user exists
+        self.client.login(**context_dict)
+        self.assertTrue(User.objects.filter(username=context_dict["username"]).exists())
+        #print(response)
+        #self.assertEquals(response.status_code, 302) # redirect to profile page
+
+    def test_login_uses_correct_template(self):
+        response = self.client.get(reverse('leidos_app:login'))
+        self.assertTemplateUsed(response, template_name='leidos_app/login.html')
+        self.assertEquals(response.status_code, 200)
+
+class TestRegisterView(TestCase):
+    
+    def setUp(self):
+        self.client = Client()
+        self.register_url = reverse('leidos_app:register')
+
+    def test_register_POST_registers(self):
+        context_dict ={}
+        context_dict["username"] = "test_user"
+        context_dict["password"] = "test_user"
+        context_dict["is_business_owner"] = "Yes"
+
+        response = self.client.post(self.register_url, context_dict, follow=True)
+        self.assertEquals(response.status_code, 200)
+        self.assertTrue(User.objects.filter(username=context_dict["username"]).exists())
+
+    def test_register_page_uses_correct_template(self):
+        response = self.client.get(reverse('leidos_app:register'))
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed(response, template_name='leidos_app/register.html')
+
 
