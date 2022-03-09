@@ -450,10 +450,6 @@ def register_business(request):
         if form.is_valid():
             business_obj = form.save(commit=False)
 
-
-            print(request.POST["address"], "------" ,request.POST["lat"], "------", request.POST["long"])
-            print(f"files:{request.FILES}")
-
             if 'img' in request.FILES:
                 business_obj.img = request.FILES['img']
 

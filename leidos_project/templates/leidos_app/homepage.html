@@ -6,6 +6,7 @@
     <link rel="stylesheet" type = "text/css" href="{% static 'homepage_map.css' %}">
     <!-- JavaScript the Map -->
     <script>
+
       function initAutocomplete() {
         const map = new google.maps.Map(document.getElementById("map"), {
           center: { lat: 	55.873543, lng: -4.289058 },
@@ -74,6 +75,16 @@
           });
           map.fitBounds(bounds);
         });
+
+        {% for business in businesses %}
+              var point = new google.maps.LatLng({{business.lat}},{{business.long}});
+              console.log("point=" + point);
+              var marker = new google.maps.Marker({
+              position: point,
+              map: map
+              });
+        {% endfor %}
+
       }
 
       function addMarker(coordinates) {
@@ -97,13 +108,8 @@
         />    
 
         <div id = "map"></div>
-        <script  
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOLE9zYh4J-uU_dO_iykrtcu0YOL3f7_Y&callback=initAutocomplete&libraries=places&v=weekly"
-        async>
-
-        function loadBusinesses(){
-          {% for b in businesses %}
-        }
+        <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOLE9zYh4J-uU_dO_iykrtcu0YOL3f7_Y&callback=initAutocomplete&libraries=places&v=weekly">
 
       </script>
 <div class="">
