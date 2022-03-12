@@ -76,24 +76,62 @@
           map.fitBounds(bounds);
         });
 
+
         {% for business in businesses %}
+
+              var contentString =
+                '<div id="content">' +
+                '<div id="siteNotice">' +
+                "</div>" +
+                '<h1 id="firstHeading" class="firstHeading">{{business.name}}</h1>' +
+                '<div id="bodyContent">' +
+                "<p>{{business.description}}</p>" +
+                "</div>" +
+                "</div>";
+
+              // var infowindow = new google.maps.InfoWindow({
+              //   content: contentString,
+              // });
+
               var point = new google.maps.LatLng({{business.lat}},{{business.long}});
               console.log("point=" + point);
               var marker = new google.maps.Marker({
-              position: point,
-              map: map
+                position: point,
+                map: map
               });
+              marker.content = '<div id="content">' +
+                '<div id="siteNotice">' +
+                "</div>" +
+                '<h2 id="firstHeading" class="firstHeading">{{business.name}}</h2>' +
+                '<div id="bodyContent">' +
+                "<p>{{business.description}}</p>" +
+                "<p>{{business.address}}</p>" +
+                "</div>" +
+                "</div>";
+
+              var infoWindow = new google.maps.InfoWindow();
+              google.maps.event.addListener(marker, 'click', function () {
+                infoWindow.setContent(this.content);
+                infoWindow.open(this.getMap(), this);
+              });
+
+              // marker.addListener("click", () => {
+              //   infowindow.setContent(contentString);
+              //   infowindow.open(map, marker);
+              // });
+
+
         {% endfor %}
 
       }
 
       function addMarker(coordinates) {
-      var marker = new google.maps.Marker({
-      position: coordinates, // Passing the coordinates
-      map:map, //Map that we need to add
-      draggarble: false// If set to true you can drag the marker
-   });
-}
+        var marker = new google.maps.Marker({
+          position: coordinates, // Passing the coordinates
+          map:map, //Map that we need to add
+          draggarble: false// If set to true you can drag the marker
+        });
+      }
     </script>
 
 {% endblock %}
