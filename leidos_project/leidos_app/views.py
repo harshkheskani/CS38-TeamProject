@@ -114,7 +114,7 @@ def user_register(request):
                 profile.profile_pic = request.FILES['profile_pic']
             else:
                 # If not profile picture, set to default
-                profile_model.profile_pic = 'profile_images/default.png'
+                profile.profile_pic = 'profile_images/default.png'
 
             profile.is_business_owner = request.POST.get("is_business_owner") == "Yes"
 
