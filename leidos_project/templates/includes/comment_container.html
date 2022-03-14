@@ -19,7 +19,7 @@
          </div>
          <div class="d-flex justify-content-between p-1 border-top">
              {% if user == comment.user_fk and "profile" not in request.path %}
-             <a href="{% url 'leidos_app:delete_comment' comment.pk %}" class="btn btn-danger">Delete Comment</a>
+             <a href="{% url 'leidos_app:delete_comment' comment.pk %}" class="btn btn-danger">Delete Review</a>
              {% endif %}
          </div>
      </div>
