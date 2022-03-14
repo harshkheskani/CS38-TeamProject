@@ -5,5 +5,5 @@
     width: 70%;
     /* The width is the width of the web page */
   }
-  nav ul{height:200px; width:18%;}
+  nav ul{height:400px; width:18%;}
   nav ul{overflow:hidden; overflow-y:scroll;}
