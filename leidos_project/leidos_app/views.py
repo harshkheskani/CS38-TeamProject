@@ -501,7 +501,7 @@ def save_business_edit(request, business_name_slug):
         messages.error(request, f"Business '{business_name_slug}' does not exist")
         return redirect(reverse("leidos_app:homepage"))
 
-    if request.user != business_obj.owner_fk and not request.user.is_superuser:
+    if request.user != Business.objects.get(slug=business_name_slug).owner_fk and not request.user.is_superuser:
         messages.error(request, "You do not have access to this feature")
         return redirect(reverse("leidos_app:homepage"))
 
@@ -527,7 +527,7 @@ def save_business_edit(request, business_name_slug):
 def save_opening_hours_edit(request, hours_pk):
 
     # Check for broken access control
-    if request.user != business_obj.owner_fk and not request.user.is_superuser:
+    if request.user != OpeningHours.objects.get(pk=hours_pk).business_fk.owner_fk and not request.user.is_superuser:
         messages.error(request, "You do not have access to this feature")
         return redirect(reverse("leidos_app:homepage"))
 
