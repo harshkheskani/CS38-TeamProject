@@ -108,22 +108,8 @@ class RegisterBusinessForm(forms.ModelForm):
 
 class EditBusinessForm(forms.ModelForm):
 
-    class Meta:
-        model = Business
-        exclude = ('owner_fk',)
-
-        labels = {
-            "img": "Cover Image",
-        }
-
-        widgets = {
-            "name": forms.TextInput(attrs={"class": "form-control"}),
-            "address": forms.TextInput(attrs={"class": "form-control"}),
-            "img": forms.ClearableFileInput(attrs={"class": "form-control"}),
-            "description": forms.Textarea(attrs={"class": "form-control", "rows":7, "style":"height: 178px;"}),
-        }
-
-class EditBusinessForm(forms.ModelForm):
+    lat = forms.FloatField(widget=forms.HiddenInput(), required=False)
+    long = forms.FloatField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
         model = Business

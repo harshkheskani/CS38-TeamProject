@@ -2,188 +2,153 @@
 {% load static %}
 
 {% block head %}
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-    <link rel="stylesheet" type = "text/css" href="{% static 'homepage_map.css' %}">
-    <!-- JavaScript the Map -->
-    <script>
 
-      function initAutocomplete() {
-        const map = new google.maps.Map(document.getElementById("map"), {
-          center: { lat: 	55.873543, lng: -4.289058 },
-          zoom: 13,
-          mapTypeId: "roadmap",
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+  <link rel="stylesheet" type = "text/css" href="{% static 'homepage_map.css' %}">
+  
+  <!-- JavaScript the Map -->
+  <script>
+
+    function initAutocomplete() {
+      
+      const map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 	55.873543, lng: -4.289058 },
+        zoom: 13,
+        mapTypeId: "roadmap",
+      });
+
+      // Create the search box and link it to the UI element.
+      const input = document.getElementById("pac-input");
+      const searchBox = new google.maps.places.SearchBox(input);
+
+      map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
+      // Bias the SearchBox results towards current map's viewport.
+      map.addListener("bounds_changed", () => {
+        searchBox.setBounds(map.getBounds());
+      });
+
+      let markers = [];
+
+      // Listen for the event fired when the user selects a prediction and retrieve
+      // more details for that place.
+      searchBox.addListener("places_changed", () => {
+        const places = searchBox.getPlaces();
+
+        if (places.length == 0) {
+          return;
+        }
+
+        // Clear out the old markers.
+        markers.forEach((marker) => {
+          marker.setMap(null);
         });
-        // Create the search box and link it to the UI element.
-        const input = document.getElementById("pac-input");
-        const searchBox = new google.maps.places.SearchBox(input);
+        markers = [];
 
-        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-        // Bias the SearchBox results towards current map's viewport.
-        map.addListener("bounds_changed", () => {
-          searchBox.setBounds(map.getBounds());
-        });
+        // For each place, get the icon, name and location.
+        const bounds = new google.maps.LatLngBounds();
 
-        let markers = [];
+        places.forEach((place) => {
 
-        // Listen for the event fired when the user selects a prediction and retrieve
-        // more details for that place.
-        searchBox.addListener("places_changed", () => {
-          const places = searchBox.getPlaces();
-
-          if (places.length == 0) {
+          if (!place.geometry || !place.geometry.location) {
+            console.log("Returned place contains no geometry");
             return;
           }
 
-          // Clear out the old markers.
-          markers.forEach((marker) => {
-            marker.setMap(null);
-          });
-          markers = [];
+          const icon = {
+            url: place.icon,
+            size: new google.maps.Size(71, 71),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(17, 34),
+            scaledSize: new google.maps.Size(25, 25),
+          };
 
-          // For each place, get the icon, name and location.
-          const bounds = new google.maps.LatLngBounds();
-
-          places.forEach((place) => {
-            if (!place.geometry || !place.geometry.location) {
-              console.log("Returned place contains no geometry");
-              return;
-            }
-
-            const icon = {
-              url: place.icon,
-              size: new google.maps.Size(71, 71),
-              origin: new google.maps.Point(0, 0),
-              anchor: new google.maps.Point(17, 34),
-              scaledSize: new google.maps.Size(25, 25),
-            };
-
-            // Create a marker for each place.
-            markers.push(
-              new google.maps.Marker({
-                map,
-                icon,
-                title: place.name,
-                position: place.geometry.location,
-              })
-            );
-            if (place.geometry.viewport) {
-              // Only geocodes have viewport.
-              bounds.union(place.geometry.viewport);
-            } else {
-              bounds.extend(place.geometry.location);
-            }
-          });
-          map.fitBounds(bounds);
+          // Create a marker for each place.
+          markers.push(
+            new google.maps.Marker({
+              map,
+              icon,
+              title: place.name,
+              position: place.geometry.location,
+            })
+          );
+        
+          if (place.geometry.viewport) {
+            // Only geocodes have viewport.
+            bounds.union(place.geometry.viewport);
+          } else {
+            bounds.extend(place.geometry.location);
+          }
         });
+      
+        map.fitBounds(bounds);
+      });
 
+      // Add markers on the map for each business in the database
+      {% for business in businesses %}
 
-        {% for business in businesses %}
-
-              var contentString =
-                '<div id="content">' +
-                '<div id="siteNotice">' +
-                "</div>" +
-                '<h1 id="firstHeading" class="firstHeading">{{business.name}}</h1>' +
-                '<div id="bodyContent">' +
-                "<p>{{business.description}}</p>" +
-                "</div>" +
-                "</div>";
-
-              // var infowindow = new google.maps.InfoWindow({
-              //   content: contentString,
-              // });
-
-              var point = new google.maps.LatLng({{business.lat}},{{business.long}});
-              console.log("point=" + point);
-              var marker = new google.maps.Marker({
-                position: point,
-                map: map
-              });
-              marker.content = '<div id="content">' +
-                '<div id="siteNotice">' +
-                "</div>" +
-                '<h2 id="firstHeading" class="firstHeading">{{business.name}}</h2>' +
-                '<div id="bodyContent">' +
-                "<p>{{business.description}}</p>" +
-                "<p>{{business.address}}</p>" +
-                "</div>" +
-                "</div>";
-
-              var infoWindow = new google.maps.InfoWindow();
-              google.maps.event.addListener(marker, 'click', function () {
-                infoWindow.setContent(this.content);
-                infoWindow.open(this.getMap(), this);
-              });
-
-              // marker.addListener("click", () => {
-              //   infowindow.setContent(contentString);
-              //   infowindow.open(map, marker);
-              // });
-
-
-        {% endfor %}
-
-      }
-
-      function addMarker(coordinates) {
+        var point = new google.maps.LatLng({{business.lat}},{{business.long}});
+              
         var marker = new google.maps.Marker({
-          position: coordinates, // Passing the coordinates
-          map:map, //Map that we need to add
-          draggarble: false// If set to true you can drag the marker
+          position: point,
+           map: map
         });
-      }
-    </script>
+        
+        // Infowindow content
+        marker.content = "<div style='float:left'><img src='{{MEDIA_URL}}{{business.img}}'></div><div style='float:right; padding: 10px;'><b>{{business.name}}</b><br/>{{business.description}}<br/>" + '<a href="https://www.freecodecamp.org/"><button>Visit Page</button></a>' + "</div>"        
+        
+        // Create Infowindow for each business marker
+        var infoWindow = new google.maps.InfoWindow();
+          google.maps.event.addListener(marker, 'click', function () {
+          infoWindow.setContent(this.content);
+          infoWindow.open(this.getMap(), this);
+        });
+
+      {% endfor %}
+
+    }
+    
+  </script>
 
 {% endblock %}
 
 {% block body_block %}
-        <div style="text-align: center;"><span>Find a local food place near you</span></div>
+        
+  <div style="text-align: center;"><span>Find a local food place near you</span></div>
         <input
           id="pac-input"
           class="controls"
           type="text"
           placeholder="Search Box"
         />
-        <div id = "map"; style = "float:left"></div>
+        <div id = "map" style = "float:left"></div>
         <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOLE9zYh4J-uU_dO_iykrtcu0YOL3f7_Y&callback=initAutocomplete&libraries=places&v=weekly">
         </script>
-        <div style = "float:left">
-          <nav>        
-              <ul>
-                <li>Link 1</li>
-                <li>Link 2</li>
-                <li>Link 3</li>
-                <li>Link 4</li>
-                <li>Link 5</li>
-                <li>Link 6</li> 
-                <li>Link 7</li> 
-                <li>Link 8</li>
-                <li>Link 9</li>
-                <li>Link 10</li>
-                <li>Link 11</li>
-                <li>Link 13</li>
-                <li>Link 13</li>
 
-            </ul>
-        </nav>
-      </div>
-    <div class="">
+
+  <div class="">
+
     <form class="d-flex " style="margin-left: 40%; margin-right: 40%" action="{% url 'leidos_app:search_business' request.path|url_to_str %}">
-        <input id="tags" class="form-control me-2" type="search" placeholder="Search Business" aria-label="Search" name="business_name">
+        
+      <input id="tags" class="form-control me-2" type="search" placeholder="Search Business" aria-label="Search" name="business_name">
+        
         <script>
-            $(function () {
-                var availableTags = [
-                    {% for business in businesses %}
-                    "{{business.name}}",
-                    {% endfor %}
-        ];
+          $(function () {
+            var availableTags = [
+              {% for business in businesses %}
+                "{{business.name}}",
+              {% endfor %}
+            ];
+            
             $("#tags").autocomplete({
-                source: availableTags
+              source: availableTags
             });
-      } );
+          });  
         </script>
+
         <button class="btn btn-outline-success" type="submit">Search</button>
+
     </form>
-</div>
+  </div>
+
 {% endblock %}
