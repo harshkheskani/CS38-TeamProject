@@ -516,6 +516,11 @@ def save_business_edit(request, business_name_slug):
             if 'img' in request.FILES:
                 business_edit.img = request.FILES['img']
 
+            if request.POST["lat"] == "" or request.POST["long"] == "":
+                b = Business.objects.get(slug=business_name_slug)
+                business_edit.lat = b.lat
+                business_edit.long = b.long
+
             business_edit.save()
             messages.success(request, "Business details successfully changed")
             return redirect(reverse("leidos_app:edit_business", kwargs={"business_name_slug": business_name_slug}))
