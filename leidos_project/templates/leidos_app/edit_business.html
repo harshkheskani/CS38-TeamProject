@@ -1,6 +1,6 @@
 {% extends 'leidos_app/base.html' %}
 {% load static %}
-
+{% load bootstrap_icons %}
 {% block title_block %}
 Edit Business Details
 {% endblock %}
@@ -15,9 +15,12 @@ async>
 
 <link rel="stylesheet" type="text/css" href="{% static 'business.css' %}"/>
 
-     <div class="container mt-3" id="content">
-        <h1 id="head">Edit Business Details</h1>
-		<div id="head">
+	 <a href="{% url 'leidos_app:business' business.slug %}" class="btn btn-primary" style="margin: 10px; margin-left: 93%">
+		 Go Back
+	 </a>
+     <div class="container mt-3 justify-content-center" id="content">
+        <h1 class="text-center">Edit Business Details</h1>
+		<div class="text-center">
 		 {% include 'includes/create_section_modal.html' %}
 		 {% if section_item_form %}
 		 	{% include 'includes/create_section_item_modal.html' %}
@@ -110,7 +113,7 @@ async>
 					</div>
 
 					<div class="col d-flex justify-content-end align-items-end">
-						<a class="btn btn-danger" type="button" href="{% url 'leidos_app:delete_opening_hours' hour_form.0.pk %}">Delete</a>
+						<a class="btn btn-danger" type="button" href="{% url 'leidos_app:delete_opening_hours' hour_form.0.pk %}">{% bs_icon 'trash3' %}</a>
 					</div>
 
 				</form>

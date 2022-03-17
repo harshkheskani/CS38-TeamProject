@@ -148,3 +148,27 @@ class AddCommentForm(forms.ModelForm):
             "content": forms.Textarea(attrs={"class": "form-control", "rows":3}),
         }
 
+
+class ProfilePictureForm(forms.ModelForm):
+
+    class Meta:
+        model = UserProfile
+        fields = ('profile_pic',)
+
+        labels = {'profile_pic': 'Profile Picture'}
+
+        widgets = {
+            "profile_pic": forms.ClearableFileInput(attrs={"class": "form-control"})
+        }
+
+class ProfileDescriptionForm(forms.ModelForm):
+
+    class Meta:
+        model = UserProfile
+        fields = ('description',)
+
+        labels = {'description': ''}
+
+        widgets = {
+            "description": forms.Textarea(attrs={"class": "form-control", "rows":3})
+        }
