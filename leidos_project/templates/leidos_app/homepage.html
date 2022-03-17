@@ -94,7 +94,7 @@
         });
         
         // Infowindow content
-        marker.content = "<div style='float:left'><img src='{{MEDIA_URL}}{{business.img}}'></div><div style='float:right; padding: 10px;'><b>{{business.name}}</b><br/>{{business.description}}<br/>" + '<a href="https://www.freecodecamp.org/"><button>Visit Page</button></a>' + "</div>"        
+        marker.content = "<div style='float:left'><img src='{{MEDIA_URL}}{{business.img}}'></div><div style='float:right; padding: 10px;'><b>{{business.name}}</b><br/>{{business.description}}<br/>" + '<a href="{% url 'leidos_app:business' business.slug %}" class="btn btn-primary">Visit Page</a>' + "</div>"        
         
         // Create Infowindow for each business marker
         var infoWindow = new google.maps.InfoWindow();
@@ -120,10 +120,11 @@
           type="text"
           placeholder="Search Box"
         />
-        <div id = "map" style = "float:left"></div>
-        <script async defer
+        
+      <div id = "map" style = "float:left"></div>
+      <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOLE9zYh4J-uU_dO_iykrtcu0YOL3f7_Y&callback=initAutocomplete&libraries=places&v=weekly">
-        </script>
+      </script>
 
 
   <div class="">
