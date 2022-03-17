@@ -25,4 +25,6 @@ urlpatterns = [
 	path('search_business/<str:path>', views.search_business, name="search_business"),
 	path('add_favorite/<slug:business_name_slug>', views.add_favorite, name="add_favorite"),
 	path('remove_favorite/<slug:business_name_slug>', views.remove_favorite, name="remove_favorite"),
+	path('prof_pic_edit', views.save_profile_pic, name="save_profile_pic"),
+	path('prof_desc_edit', views.save_profile_desc, name="save_profile_desc"),
 ]

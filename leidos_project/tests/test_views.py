@@ -278,6 +278,12 @@ class TestEditBusinessView(TestCase):
         self.assertNotContains(response, "Friday")
         self.assertNotContains(response, "7am")
         self.assertNotContains(response, "7pm")
+        
+
+
+
+
+
 
 
 class TestLoginView(TestCase):

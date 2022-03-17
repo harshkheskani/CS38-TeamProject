@@ -6,7 +6,7 @@ from leidos_app.forms import *
 from django.contrib import messages
 from django.urls import reverse
 from django.utils.text import slugify
-
+from django import forms
 
 def homepage(request):
 
@@ -40,7 +40,50 @@ def profile(request):
         "businesses": get_all_businesses()
     }
 
+    context_dict["owned_businesses"] = Business.objects.filter(owner_fk=request.user)
+    context_dict["favorites"] = Favorite.objects.filter(user_fk=request.user)
+    context_dict["comments"] = Comment.objects.filter(user_fk=request.user).order_by("-date_posted")
+    context_dict["edit_picture_form"] = ProfilePictureForm(initial={"profile_pic":request.user.userprofile.profile_pic})
+    context_dict["edit_description_form"] = ProfileDescriptionForm(initial={"description": request.user.userprofile.description})
+
     return render(request, 'leidos_app/profile.html', context_dict)
+
+def save_profile_pic(request):
+
+    prof = UserProfile.objects.get(user=request.user)
+
+    form = ProfilePictureForm(request.POST, instance=prof)
+    if form.is_valid():
+
+        profile_model = form.save(commit=False)
+
+        if 'profile_pic' in request.FILES:
+            profile_model.profile_pic = request.FILES['profile_pic']
+        else:
+            profile_model.profile_pic = 'profile_images/default.png'
+
+        profile_model.save()
+
+        messages.success(request, "Profile picture changed")
+        return redirect(reverse('leidos_app:profile'))
+
+    else:
+        messages.warning(request, form.errors)
+        return redirect(reverse('leidos_app:profile'))
+
+
+def save_profile_desc(request):
+
+    form = ProfileDescriptionForm(request.POST, instance=request.user.userprofile)
+
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Description saved")
+        return redirect(reverse("leidos_app:profile"))
+    else:
+        messages.error(request, form.errors)
+        return redirect(reverse("leidos_app:profile"))
+
 
 def user_register(request):
 
@@ -179,6 +222,10 @@ def create_section_item(request, business_name_slug):
 
 @login_required
 def delete_section_item(request, item_pk):
+
+    if not SectionItem.objects.filter(pk=item_pk).exists():
+        return redirect("leidos_app:homepage")
+
     if request.user != SectionItem.objects.get(pk=item_pk).section_fk.business_fk.owner_fk and not request.user.is_superuser:
         messages.error(request, "You do not have access to this feature")
         return redirect("leidos_app:homepage")
@@ -222,6 +269,9 @@ def create_section(request, business_name_slug):
 
 @login_required
 def delete_section(request, section_pk):
+
+    if not MenuSection.objects.filter(pk=section_pk).exists():
+        return redirect("leidos_app:homepage")
 
     if request.user != MenuSection.objects.get(pk=section_pk).business_fk.owner_fk and not request.user.is_superuser:
         messages.error(request, "You do not have access to this feature")
@@ -303,6 +353,9 @@ def add_opening_hours(request, business_name_slug):
 
 @login_required
 def delete_opening_hours(request, hours_pk):
+
+    if not OpeningHours.objects.filter(pk=hours_pk).exists():
+        return redirect("leidos_app:homepage")
 
     if request.user != OpeningHours.objects.get(pk=hours_pk).business_fk.owner_fk and not request.user.is_superuser:
         messages.error(request, "You do not have access to this feature")
@@ -396,6 +449,12 @@ def edit_business(request, business_name_slug):
 
 @login_required
 def save_business_edit(request, business_name_slug):
+
+    if request.user != business_obj.owner_fk and not request.user.is_superuser:
+        messages.error(request, "You do not have access to this feature")
+        return redirect(reverse("leidos_app:homepage"))
+
+
     if request.method == 'POST':
         edit_form = EditBusinessForm(request.POST, instance=Business.objects.get(slug=business_name_slug))
 
@@ -414,6 +473,11 @@ def save_business_edit(request, business_name_slug):
 
 @login_required
 def save_opening_hours_edit(request, hours_pk):
+
+    if request.user != business_obj.owner_fk and not request.user.is_superuser:
+        messages.error(request, "You do not have access to this feature")
+        return redirect(reverse("leidos_app:homepage"))
+
     if request.method == 'POST':
         hours = OpeningHours.objects.get(pk=hours_pk)
         edit_form = EditOpeningHours(request.POST, instance=hours)
@@ -519,6 +583,9 @@ def add_comment(request, business_name_slug):
         return HttpResponse(form.errors)
 
 def delete_comment(request, comment_pk):
+
+    if not Comment.objects.filter(pk=comment_pk).exists():
+        return redirect("leidos_app:homepage")
 
     if request.user != Comment.objects.get(pk=comment_pk).user_fk and not request.user.is_superuser:
         messages.error(request, "You do not have access to this feature")
