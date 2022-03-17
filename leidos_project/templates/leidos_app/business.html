@@ -67,7 +67,7 @@
 			<button class="btn btn-primary btn-lg trs" style="margin-right: 5%"
 					onclick=document.getElementById("{{ section.0.name }}").scrollIntoView(true)>{{ section.0.name }}</button>
 			{% endfor %}
-			<button class="btn btn-primary btn-lg trs" onclick=document.getElementById("comments").scrollIntoView(true)>Comments</button>
+			<button class="btn btn-primary btn-lg trs" onclick=document.getElementById("comments").scrollIntoView(true)>Reviews</button>
 
 			{% if not user.is_anonymous %}
 				{% if user != business.owner_fk %}
@@ -108,7 +108,7 @@
 
 <!-- Create comment sections with "Leave a Comment" modal button for authenticated non-owner users -->
 <div id="comments" class="container-flex" style="background-color: #5A9BD5; padding: 10px">
-	<span style="padding-right: 39.23%"><b>Comments</b></span>
+	<span style="padding-right: 39.23%"><b>Reviews</b></span>
 	{% if not user.is_anonymous and user.is_authenticated and user != business.owner_fk %}
 		{% include 'includes/add_comment_modal.html' %}
 	{% endif %}
