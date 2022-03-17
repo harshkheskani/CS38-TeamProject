@@ -35,8 +35,8 @@ class Business(models.Model):
 
     name = models.CharField(max_length=128)
     address = models.CharField(max_length=128)
-    lat = models.FloatField(blank=True)
-    long = models.FloatField(blank=True)
+    lat = models.FloatField(default=0.0)
+    long = models.FloatField(default=0.0)
     img = models.ImageField(upload_to="business_images", blank=True)
     description = models.TextField(max_length=1024, blank=True)
 
