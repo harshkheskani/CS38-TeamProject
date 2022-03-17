@@ -51,7 +51,7 @@ def profile(request):
 
     return render(request, 'leidos_app/profile.html', context_dict)
 
-# View to safe profile picture edit on profile page (invoked in modal)
+# View to save profile picture edit on profile page (invoked in modal)
 def save_profile_pic(request):
 
     prof = UserProfile.objects.get(user=request.user)
@@ -76,7 +76,7 @@ def save_profile_pic(request):
         messages.warning(request, form.errors)
         return redirect(reverse('leidos_app:profile'))
 
-# View to safe profile description edit on profile page (invoked in modal)
+# View to save profile description edit on profile page (invoked in modal)
 def save_profile_desc(request):
 
     form = ProfileDescriptionForm(request.POST, instance=request.user.userprofile)
