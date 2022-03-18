@@ -121,43 +121,47 @@
 
 {% block body_block %}
         
-  <div style="text-align: center;"><span>Find a local food place near you</span></div>
-        <input
-          id="pac-input"
-          class="controls"
-          type="text"
-          placeholder="Search Box"
-        />
-        
-      <div id = "map" style = "float:left"></div>
-      <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOLE9zYh4J-uU_dO_iykrtcu0YOL3f7_Y&callback=initAutocomplete&libraries=places&v=weekly">
-      </script>
+  <div style="text-align: center;font-size: 40pt; padding: 2%"><b><span>Find and Support</span></b>
+  <b><span>a local business around you!</span></b></div>
+  <div style="text-align: left;font-size: 20pt; padding: 7px"><span>Search for a buisness</span></div>
+  <input
+    id="pac-input"
+    class="controls"
+    type="text"
+    placeholder="Search Box"
+    />
+
+    <div class="" style ="padding:10px; align-items: left;">
+
+      <form class="d-flex " style="margin-left: 2%; margin-right: 2%" action="{% url 'leidos_app:search_business' request.path|url_to_str %}">
+          
+        <input id="tags" class="form-control me-2" type="search" placeholder="Search Business" aria-label="Search" name="business_name">
+          
+          <script>
+            $(function () {
+              var availableTags = [
+                {% for business in businesses %}
+                  "{{business.name}}",
+                {% endfor %}
+              ];
+              
+              $("#tags").autocomplete({
+                source: availableTags
+              });
+            });  
+          </script>
+  
+          <button class="btn btn-outline-success" type="submit">Search</button>
+  
+      </form>
+    </div>
+  <div style="text-align: left;font-size: 20pt; padding: 7px"><span>or find some in your area!</span></div>
+  <div id = "map" ></div>
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOLE9zYh4J-uU_dO_iykrtcu0YOL3f7_Y&callback=initAutocomplete&libraries=places&v=weekly">
+  </script>
 
 
-  <div class="">
 
-    <form class="d-flex " style="margin-left: 40%; margin-right: 40%" action="{% url 'leidos_app:search_business' request.path|url_to_str %}">
-        
-      <input id="tags" class="form-control me-2" type="search" placeholder="Search Business" aria-label="Search" name="business_name">
-        
-        <script>
-          $(function () {
-            var availableTags = [
-              {% for business in businesses %}
-                "{{business.name}}",
-              {% endfor %}
-            ];
-            
-            $("#tags").autocomplete({
-              source: availableTags
-            });
-          });  
-        </script>
-
-        <button class="btn btn-outline-success" type="submit">Search</button>
-
-    </form>
-  </div>
 
 {% endblock %}
