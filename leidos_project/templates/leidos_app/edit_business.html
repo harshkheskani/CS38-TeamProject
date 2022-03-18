@@ -7,8 +7,17 @@ Edit Business Details
 
 {% block body_block %}
 
+<script  
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOLE9zYh4J-uU_dO_iykrtcu0YOL3f7_Y&callback=initialize&libraries=places&v=weekly"
+async>
+</script>
+
+
 <link rel="stylesheet" type="text/css" href="{% static 'business.css' %}"/>
 
+	 <a href="{% url 'leidos_app:business' business.slug %}" class="btn btn-primary" style="margin: 10px; margin-left: 93%">
+		 Go Back
+	 </a>
      <div class="container mt-3 justify-content-center" id="content">
         <h1 class="text-center">Edit Business Details</h1>
 		<div class="text-center">
@@ -38,8 +47,32 @@ Edit Business Details
 						<label for="id_description" class="form-label">Business Description</label>
 						{{ business_form.description }}
                 	 </div>
+
+					 {{business_form.lat}}
+					 
+					 {{business_form.long}}
+
 					<button class="btn btn-secondary col-md-1" type="submit">Edit</button>
 			</form>
+
+			<script>
+				function initialize() {
+					var input = document.getElementById('id_address');
+					var autocomplete = new google.maps.places.Autocomplete(input, { types: ["geocode"] });
+					autocomplete.setFields(["address_component","geometry"]);
+					autocomplete.addListener('place_changed', function() {
+						console.log("lat=" + autocomplete.getPlace().geometry.location.lat());
+						console.log("long=" + autocomplete.getPlace().geometry.location.lng());
+						console.log(autocomplete.getPlace().geometry.location.toUrlValue(6));
+						document.getElementById('id_lat').value = autocomplete.getPlace().geometry.location.lat()
+						document.getElementById('id_long').value = autocomplete.getPlace().geometry.location.lng()
+					  });
+				}
+		
+				google.maps.event.addDomListener(window, 'load', initialize);
+			</script>
+		
+
 		 </div>
 		 <br/>
 		{% if hours_forms %}

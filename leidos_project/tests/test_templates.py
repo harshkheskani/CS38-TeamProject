@@ -1,4 +1,3 @@
-from msilib.schema import Class
 from urllib import response
 from django.test import TestCase, Client
 from django.urls import resolve
@@ -82,7 +81,6 @@ class TestRegisterBusinessTemplate(TestCase):
         # Check response1 for correctness
         self.assertContains(response1, "Name")
         self.assertContains(response1, "Address")
-        self.assertContains(response1, "Img")
         self.assertContains(response1, "Description")
         self.assertNotContains(response1, "Owner_fk")
         self.assertNotContains(response1, "Slug")
@@ -97,7 +95,7 @@ class TestRegisterBusinessTemplate(TestCase):
         self.assertEquals(response2.status_code, 302)
 
         # Check response2 for correctness
-        self.assertRedirects(response2, "/leidos_app/homepage/") # Non-business owner should be redirected to homepage
+        self.assertRedirects(response2, "/leidos_app/") # Non-business owner should be redirected to homepage
 
         # TODO figure out how to check for redirected content
 

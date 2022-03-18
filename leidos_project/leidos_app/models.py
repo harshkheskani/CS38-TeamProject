@@ -35,6 +35,8 @@ class Business(models.Model):
 
     name = models.CharField(max_length=128)
     address = models.CharField(max_length=128)
+    lat = models.FloatField(default=0.0)
+    long = models.FloatField(default=0.0)
     img = models.ImageField(upload_to="business_images", blank=True)
     description = models.TextField(max_length=1024, blank=True)
 
@@ -57,7 +59,6 @@ class OpeningHours(models.Model):
     weekday_to = models.CharField(max_length=10, choices=WEEKDAYS, blank=True)
     from_hour = models.CharField(max_length=5, choices=HOUR_OF_DAY_24)
     to_hour = models.CharField(max_length=5, choices=HOUR_OF_DAY_24)
-
 
 class MenuSection(models.Model):
 

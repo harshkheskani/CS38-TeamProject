@@ -258,26 +258,28 @@ class TestEditBusinessView(TestCase):
 
     def test_delete_opening_hours(self):
         self.client.login(username="test_profile", password="test_profile")
-        context_dict={}
-        context_dict["weekday_from"] = "Monday"
-        context_dict["weekday_to"] = "Friday"
-        context_dict["from_hour"] = "7 am"
-        context_dict["to_hour"] = "7 pm"
 
-        self.client.post(reverse("leidos_app:add_opening_hours", args= ["test-business"]), context_dict, follow=True)
 
-        #Check opening times have been added
-        response = self.client.get(self.edit_business_url)         
-        self.assertContains(response, "Monday")
+        opening_hours = OpeningHours.objects.create(weekday_from="day1", weekday_to="day2", from_hour="time1", to_hour="time2",
+                                     business_fk=self.business_obj)
+        opening_hours.save()
 
-        response = self.client.post(reverse("leidos_app:delete_opening_hours", args=[3]), follow=True)
+        pk = opening_hours.pk
+        response = self.client.post(reverse("leidos_app:delete_opening_hours", kwargs={"hours_pk":pk}), follow=True)
+
+        #Check for correct status code and template
         self.assertEquals(response.status_code, 200)
-        
-        response = self.client.get(self.edit_business_url)
-        self.assertNotContains(response, "Monday")
-        self.assertNotContains(response, "Friday")
-        self.assertNotContains(response, "7am")
-        self.assertNotContains(response, "7pm")
+        self.assertTemplateUsed(response, "leidos_app/edit_business.html")
+
+        #Check if object not in database
+        self.assertFalse(OpeningHours.objects.filter(pk=pk).exists())
+
+        #Check if response does not contain any of the deleted data
+        self.assertNotContains(response, "day1")
+        self.assertNotContains(response, "day2")
+        self.assertNotContains(response, "time1")
+        self.assertNotContains(response, "time2")
+
         
 
 

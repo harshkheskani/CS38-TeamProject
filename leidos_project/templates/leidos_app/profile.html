@@ -9,138 +9,82 @@
 {% block body_block %}
 
 <div class="container-fluid">
+
     <div class="row justify-content-center">
-        <div class="col-lg-6 text-center">
-
-            <div style="margin-top: 7%; margin-bottom: 15%; margin-left: 25%; width: 300px; height: 300px; background-color: #5A9BD5">
-                <p style="margin-top: 10px; font-size: 50px">{{request.user.username}}</p>
-                <img alt="Profile Picture" src="{{MEDIA_URL}}{{request.user.userprofile.profile_pic}}" style="max-width: 252px; max-height: 200px">
-                {% include 'includes/edit_profile_pic_modal.html' %}
+        <div class="row mt-5 d-flex justify-content-around align-baseline">
+          <div class="col-12 text-center text-light align-self-center p-3 rounded" style="background-color: #3F7875;">
+            <div class="d-flex flex-column">
+              <img src="{{MEDIA_URL}}{{request.user.userprofile.profile_pic}}" class="img-thumbnail img-fluid rounded-circle mx-auto" alt="" style="width: 8rem; height: 8rem;">
+              <h2>{{request.user.username}}</h2>
+              <span class="help-block">{{request.user.userprofile.description}}</span>
             </div>
+              {% include 'includes/edit_profile_pic_modal.html' %}
+              {% include 'includes/edit_profile_desc_modal.html' %}
+          </div>
 
-        </div>
+        <div class="col-lg-4 text-center" style="margin-top: 50px; background-color: #5A9BD5; border-top-left-radius: 1%">
 
-        <div class="col-lg-6 text-center">
-            <div class="container-flex" style="margin-top: 7%; margin-right: 25%;background-color: #5A9BD5; height: 300px">
-                <div class="row-flex justify-content-center">
-                    <p style="font-size: 45px"> About You </p>
-                    <div class="col-md-12 overflow-auto text-center">
-                        {% if not request.user.userprofile.description %}
-                            You have currently no description of yourself
-                        {% else %}
-                            {{request.user.userprofile.description}}
-                        {% endif %}
-                    </div>
-                </div>
-
-                {% include 'includes/edit_profile_desc_modal.html' %}
-
-            </div>
-        </div>
-
-        {% if owned_businesses %}
-        <div class="col-lg-4 text-center" style="margin-top: 50px; background-color: #5A9BD5">
-
-            <p style="font-size: 25px">My Businesses</p>
+            <p style="font-size: 25px; padding-top: 5px"><b>My Businesses</b></p>
+            {% if owned_businesses %}
             <div class="card-deck">
-
                 {% for business in owned_businesses %}
-                  <div class="card mb-3" style="max-width: 540px;  border-width: 8px;">
-                      <div class="row no-gutters">
-                          {% if business.img %}
-                            <div class="col-md-4">
-                              <img src="{{MEDIA_URL}}{{business.img}}" class="card-img" alt="...">
-                            </div>
-                          {% else %}
-                             <div class="col-md-4">
-                              <h5 class="card-title" style="padding-top: 15%">No cover Image</h5>
-                            </div>
-                          {% endif %}
-                        <div class="col-md-8">
-                          <div class="card-body" style="padding-right: 20%">
-                            <h5 class="card-title">{{business.name}}</h5>
-                            <p class="card-text">{{business.address}}</p>
-                            <p class="card-text">{{business.description}}</p>
-                          </div>
-                        </div>
-                      </div>
-                      <a href="{% url 'leidos_app:business' business.slug %}">
-
-                          <button class="btn btn-link" style="position: absolute; left: 91.5%; bottom: 0;
-                                  height: 100%; background-color: transparent; box-shadow: none !important;
-                                  border-color: transparent !important;">
-                                      {% bs_icon 'chevron-right' size="1em" color="black" %}</button>
-                      </a>
-                  </div>
+              <div class="card">
+                <img class="card-img-top" src="{{MEDIA_URL}}{{business.img}}" alt="Card image cap">
+                <div class="card-body">
+                  <h5 class="card-title">{{business.name}}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{business.address}}</h6>
+                  <p class="card-text">{{business.description}}</p>
+                    <a style="border-color: transparent" href="{% url 'leidos_app:business' business.slug %}" class="btn btn-outline-primary">{% bs_icon "arrow-right" size="2em" %}</a>
+                </div>
+              </div>
+                <br>
                 {% endfor %}
             </div>
         </div>
         {% endif %}
 
-        {% if favorites %}
+
         <div class="col-lg-4 text-center" style="margin-top: 50px; background-color: #5A9BD5">
 
-            <p style="font-size: 25px">My Favorites</p>
+            <p style="font-size: 25px; padding-top: 5px"><b>My Favorites</b></p>
+            {% if favorites %}
                 <div class="card-deck">
 
+                    <div class="card-deck">
                     {% for fav in favorites %}
-                      <div class="card mb-3" style="max-width: 540px; border-width: 8px;">
-                          <div class="row no-gutters">
-                              {% if fav.business_fk.img %}
-                                <div class="col-md-4">
-                                  <img src="{{MEDIA_URL}}{{fav.business_fk.img}}" class="card-img" alt="...">
-                                </div>
-                              {% else %}
-                                 <div class="col-md-4">
-                                  <h5 class="card-title" style="padding-top: 15%">No cover Image</h5>
-                                </div>
-                              {% endif %}
-                            <div class="col-md-8">
-                              <div class="card-body" style="padding-right: 20%">
-                                <h5 class="card-title">{{fav.business_fk.name}}</h5>
-                                <p class="card-text">{{fav.business_fk.address}}</p>
-                                <p class="card-text">{{fav.business_fk.description}}</p>
-                              </div>
-                            </div>
-                          </div>
-                          <a href="{% url 'leidos_app:business' fav.business_fk.slug %}">
-                                  <button class="btn btn-link" style="position: absolute; left: 91.5%; bottom: 0;
-                                  height: 100%; background-color: transparent; box-shadow: none !important;
-                                  border-color: transparent !important;">
-
-                                      {% bs_icon 'chevron-right' size="1em" color="black" %}</button>
-                          </a>
+                      <div class="card">
+                        <img class="card-img-top" src="{{MEDIA_URL}}{{fav.business_fk.img}}" alt="Card image cap">
+                        <div class="card-body">
+                          <h5 class="card-title">{{fav.business_fk.name}}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{fav.business_fk.address}}</h6>
+                          <p class="card-text">{{fav.business_fk.description}}</p>
+                            <a style="border-color: transparent" href="{% url 'leidos_app:business' fav.business_fk.slug %}" class="btn btn-outline-primary">{% bs_icon "arrow-right" size="2em" %}</a>
+                        </div>
                       </div>
+                        <br>
                     {% endfor %}
+            </div>
                 </div>
         </div>
         {% endif %}
 
-        {% if comments %}
-        <div class="col-lg-4 text-center" style="margin-top: 50px; background-color: #5A9BD5">
 
-            <p style="font-size: 25px; margin-right: 25px">My Reviews</p>
+        <div class="col-lg-4 text-center" style="margin-top: 50px; background-color: #5A9BD5; border-top-right-radius: 1%">
+
+            <p style="font-size: 25px; padding-top: 5px"><b>My Reviews</b></p>
+            {% if comments %}
                 <div class="card-deck">
 
                     {% for comment in comments %}
-                      <div class="card mb-3" style="max-width: 540px; border-width: 8px;">
-                          <div class="row no-gutters">
-                            <div class="col-md-12">
-                              <div class="card-body" style="padding-right: 20%">
-                                <h5 class="card-title">Review at {{comment.business_fk.name}}</h5>
-                                <p class="card-text">{{comment.date_posted}}</p>
-                                <p class="card-text overflow-auto" style="max-height: 150px">{{comment.content}}</p>
-                              </div>
-                            </div>
+                      <div class="card">
+                          <div class="card-body">
+                            <h5 class="card-title">{{comment.business_fk.name}}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{comment.date_posted}}</h6>
+                            <p class="card-text">{{comment.content}}</p>
+                              <a style="border-color: transparent" href="{% url 'leidos_app:business' comment.business_fk.slug %}" class="btn btn-outline-primary">{% bs_icon "arrow-right" size="2em" %}</a>
                           </div>
-                          <a href="{% url 'leidos_app:business' comment.business_fk.slug %}">
-                                  <button class="btn btn-link" style="position: absolute; left: 91.5%; bottom: 0;
-                                  height: 100%; background-color: transparent; box-shadow: none !important;
-                                  border-color: transparent !important;">
-
-                                      {% bs_icon 'chevron-right' size="1em" color="black" %}</button>
-                          </a>
-                      </div>
+                           <a style="position: absolute; top: 0; right: 0; border-color: transparent;" href="{% url 'leidos_app:delete_comment' comment.pk %}" class="btn btn-outline-danger">{% bs_icon "trash3" size="1.5em" %}</a>
+                        </div>
                     {% endfor %}
                 </div>
         </div>

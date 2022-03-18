@@ -1,19 +1,17 @@
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editPicModal" style="margin-top: 20px">
-  Edit Picture
-</button>
+<button class="btn btn-primary mx-auto mt-3" data-bs-toggle="modal" data-bs-target="#editPicModal" style="width: 20%; border-radius: 2rem">Edit Image</button>
 
 <!-- Modal -->
 <div class="modal fade" id="editPicModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editPicModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog" >
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="editPicModalLabel">Edit Profile Picture</h5>
+        <h5 class="modal-title" id="editPicModalLabel" style="color: black">Edit Profile Picture</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form method="post" action="{% url 'leidos_app:save_profile_pic' %}"
-          enctype="multipart/form-data" class="auto-form">
+          enctype="multipart/form-data" class="auto-form" style="color: black">
             {% if edit_picture_form %}
                 {% csrf_token %}
                 {{edit_picture_form.as_p}}
