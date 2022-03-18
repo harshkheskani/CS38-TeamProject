@@ -75,6 +75,7 @@ class TestBusinessView(TestCase):
         self.assertEquals(response.context['sections'][0][1][0].price, 10)
 
 
+
 class TestRegisterBusinessView(TestCase):
 
 
@@ -143,16 +144,20 @@ class TestEditBusinessView(TestCase):
         self.business_obj.save()
 
 
-    def test_edit_business_GET_uses_correct_template(self):
+    def test_edit_business_GET_uses_correct_templates(self):
         self.client.login(username="test_profile", password="test_profile")
-
-        response = self.client.get(self.edit_business_url)
+        context_dict={}
+        context_dict["name"]= "test_name"
+        response = self.client.post(reverse('leidos_app:create_section', args=["test-business"]), context_dict, follow=True)
 
         self.assertEquals(response.status_code, 200)
 
         # Check if correct template is used
         self.assertTemplateUsed(response, "leidos_app/edit_business.html")
-
+        self.assertTemplateUsed(response, 'includes/create_section_item_modal.html')
+        self.assertTemplateUsed(response, 'includes/create_section_modal.html')
+        self.assertTemplateUsed(response, 'includes/create_hours_modal.html')
+        self.assertTemplateUsed(response, 'includes/delete_section_modal.html')
 
     def test_edit_business_GET_displays_instantiated_form(self):
         self.client.login(username="test_profile", password="test_profile")
@@ -160,6 +165,111 @@ class TestEditBusinessView(TestCase):
         response = self.client.get(self.edit_business_url)
 
         self.assertEquals(response.status_code, 200)
+
+    def test_add_section(self):
+        self.client.login(username="test_profile", password="test_profile")
+        context_dict ={}
+        context_dict["name"] = "test_section"
+        response = self.client.post(reverse('leidos_app:create_section', args=["test-business"]),context_dict, follow=True)
+        self.assertEquals(response.status_code, 200)
+        response = self.client.get(self.edit_business_url)
+        self.assertContains(response, "test_section")
+
+    def test_add_section_item(self):
+        self.client.login(username="test_profile", password="test_profile")
+        context_dict = {}
+        context_dict["name"] = "test_section"
+
+        self.client.post(reverse('leidos_app:create_section', args=["test-business"]),context_dict, follow=True)
+
+        context_dict["name"] = "test_name"
+        context_dict["description"] = "test_desc"
+        context_dict["price"] = "2"
+        context_dict["sections"] = "test_section"
+        
+        response = self.client.post(reverse('leidos_app:create_section_item', args=["test-business"]),context_dict, follow=True)
+        
+        self.assertEquals(response.status_code, 200)
+        
+        response = self.client.get(self.edit_business_url)
+        
+        self.assertContains(response, "test_section")
+        self.assertContains(response, "test_name")
+        self.assertContains(response, "test_desc")
+        self.assertContains(response, "2")
+
+    def test_add_opening_hours(self):
+        self.client.login(username="test_profile", password="test_profile")
+        context_dict={}
+        context_dict["weekday_from"] = "Tuesday"
+        context_dict["weekday_to"] = "Saturday"
+        context_dict["from_hour"] = "8 am"
+        context_dict["to_hour"] = "8 pm"
+
+        response = self.client.post(reverse("leidos_app:add_opening_hours", args=["test-business"]), context_dict, follow=True)
+        
+        self.assertEquals(response.status_code, 200)
+        response = self.client.get(self.edit_business_url)
+
+        self.assertContains(response, "Tuesday")
+        self.assertContains(response, "Saturday")
+        self.assertContains(response, "8am")
+        self.assertContains(response, "8pm")
+
+    def test_delete_section(self):
+        self.client.login(username="test_profile", password="test_profile")
+        context_dict ={}
+        context_dict["name"] = "test_section"
+        
+        self.client.post(reverse("leidos_app:create_section", args=["test-business"]), context_dict, follow=True)
+        response = self.client.get(self.edit_business_url)
+        
+        #Confirm section has been added
+        self.assertContains(response, "test_section")
+
+        response = self.client.post(reverse("leidos_app:delete_section", args=[0]), follow=True)
+
+        #Confirm section has been deleted
+        self.assertEquals(response.status_code, 200)
+        self.assertNotContains(response, "test_section")
+    
+    def test_delete_section_item(self):
+        self.client.login(username="test_profile", password="test_profile")
+        context_dict = {}
+        context_dict["name"] = "test_section"
+
+
+        self.client.post(reverse('leidos_app:create_section', args=["test-business"]),context_dict, follow=True)
+
+        context_dict["name"] = "test_name"
+        context_dict["description"] = "test_desc"
+        context_dict["price"] = "2"
+        context_dict["sections"] = "test_section"
+        
+        self.client.post(reverse('leidos_app:create_section_item', args=["test-business"]),context_dict, follow=True)  
+
+        response = self.client.get(self.edit_business_url)
+        self.assertContains(response, "test_name")
+
+        response = self.client.post(reverse("leidos_app:delete_section_item", args=[1]), follow=True)
+        self.assertEquals(response.status_code, 200)
+        response = self.client.get(self.edit_business_url)
+        self.assertNotContains(response, "test_name")
+
+    def test_delete_opening_hours(self):
+        self.client.login(username="test_profile", password="test_profile")
+
+        self.test_hours = OpeningHours.objects.create(business_fk=self.business_obj, weekday_from="Monday",
+                                                      weekday_to="Friday", from_hour="7AM", to_hour="7PM")
+
+
+        response = self.client.post(reverse("leidos_app:delete_opening_hours", args=[self.test_hours.pk]), follow=True)
+        self.assertEquals(response.status_code, 200)
+
+        response = self.client.get(reverse('leidos_app:business', args=["test-business"]))
+        self.assertEquals(response.status_code, 200)        
+        self.assertNotIsInstance(response.context['opening_hours'], OpeningHours)
+
 
 class TestLoginView(TestCase):
 
@@ -211,5 +321,37 @@ class TestRegisterView(TestCase):
         response = self.client.get(reverse('leidos_app:register'))
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(response, template_name='leidos_app/register.html')
+
+class TestProfileView(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.profile_url = reverse('leidos_app:profile')
+
+        user1 = User.objects.create_user(username="test_profile")
+        user1.set_password("test_profile")
+        user1.save()
+
+        self.profile = UserProfile.objects.create(user=user1, is_business_owner=False)
+        self.profile.save()
+    
+    def test_profile_uses_correct_templates(self):
+        self.client.login(username="test_profile", password="test_profile")
+        response = self.client.get(reverse('leidos_app:profile'))
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed(response, template_name='leidos_app/profile.html')
+        self.assertTemplateUsed(response, template_name='includes/edit_profile_desc_modal.html')
+        self.assertTemplateUsed(response, template_name='includes/edit_profile_pic_modal.html')
+
+
+    def test_add_description(self):
+        self.client.login(username="test_profile", password="test_profile")
+        context_dict={}
+        context_dict["description"] = "test desc"
+        self.client.post(reverse('leidos_app:save_profile_desc'), context_dict, follow=True)
+        response=self.client.get(self.profile_url)
+        self.assertContains(response, "test desc")
+
+
+
 
 
