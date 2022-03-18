@@ -152,8 +152,12 @@ deleted.
 ## Profile Page
 
 Profile page is used to customize user information and also provided
-access to list of associated businesses (owned, favorite, reviewed)
+access to list of associated businesses (owned, favorite, reviewed).
 
 ### Edit Profile Image
 
+Profile image can be edited via Edit Image button which triggers a modal. In this modal, user can select an image they want to uplaod as well as clear option to remove existing image (defaul image will be used in that case)
+
 ### Edit Profile Description
+
+Profile description can be changed via Edit Description button which triggers a modal. In this modal, user can write exhaustive description of themselves. Note however, description is not used anywhere in the web app and serves no practical purpose as of now.
