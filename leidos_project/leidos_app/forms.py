@@ -88,6 +88,8 @@ class AddOpeningTimesForm(forms.ModelForm):
 class RegisterBusinessForm(forms.ModelForm):
 
     slug = forms.SlugField(widget=forms.HiddenInput(), required=False)
+    lat = forms.FloatField(widget=forms.HiddenInput(), required=False)
+    long = forms.FloatField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
         model = Business
@@ -99,12 +101,15 @@ class RegisterBusinessForm(forms.ModelForm):
 
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
-            "address": forms.TextInput(attrs={"class": "form-control"}),
+            "address": forms.TextInput(attrs={"class": "form-control", "autocomplete": "on", "runat": "server"}),
             "img": forms.ClearableFileInput(attrs={"class": "form-control"}),
             "description": forms.Textarea(attrs={"class": "form-control", "rows":7, "style":"height: 178px;"}),
         }
 
 class EditBusinessForm(forms.ModelForm):
+
+    lat = forms.FloatField(widget=forms.HiddenInput(), required=False)
+    long = forms.FloatField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
         model = Business

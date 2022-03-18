@@ -20,22 +20,11 @@
         <li class="nav-item">
           <a class="nav-link active white" aria-current="page" href="{% url 'leidos_app:homepage' %}">Home</a>
         </li>
+        {% if not user.is_anonymous and user.is_authenticated and user.userprofile.is_business_owner %}
         <li class="nav-item">
-          <a class="nav-link white" href="#">Map</a>
+          <a class="nav-link white" href="{% url 'leidos_app:register_business' %}">Register Business</a>
         </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Dropdown
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">My Favorites</a></li>
-            {% if not user.is_anonymous and user.is_authenticated and user.userprofile.is_business_owner %}
-            <li><a class="dropdown-item" href="#">My Businesses</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{% url 'leidos_app:register_business' %}">Register New Business</a></li>
-            {% endif %}
-          </ul>
-        </li>
+        {% endif %}
       </ul>
 
       {% with request.resolver_match.view_name as view_name %}
