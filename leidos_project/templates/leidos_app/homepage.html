@@ -5,12 +5,12 @@
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
   <link rel="stylesheet" type = "text/css" href="{% static 'homepage_map.css' %}">
-  
+
   <!-- JavaScript the Map -->
   <script>
 
     function initAutocomplete() {
-      
+
       const map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: 	55.873543, lng: -4.289058 },
         zoom: 13,
@@ -71,7 +71,7 @@
               position: place.geometry.location,
             })
           );
-        
+
           if (place.geometry.viewport) {
             // Only geocodes have viewport.
             bounds.union(place.geometry.viewport);
@@ -79,7 +79,7 @@
             bounds.extend(place.geometry.location);
           }
         });
-      
+
         map.fitBounds(bounds);
       });
 
@@ -87,14 +87,22 @@
       {% for business in businesses %}
 
         var point = new google.maps.LatLng({{business.lat}},{{business.long}});
-              
+
         var marker = new google.maps.Marker({
           position: point,
            map: map
         });
-        
+
         // Infowindow content
-        marker.content = "<div style='float:left'><img src='{{MEDIA_URL}}{{business.img}}'></div><div style='float:right; padding: 10px;'><b>{{business.name}}</b><br/>{{business.description}}<br/>" + '<a href="{% url 'leidos_app:business' business.slug %}" class="btn btn-primary">Visit Page</a>' + "</div>"        
+        marker.content =    "<div class=\"card\" style=\"width: 18rem;\">\n" +
+                            "  <img class=\"card-img-top\" src=\"{{MEDIA_URL}}{{business.img}}\" alt=\"Card image cap\">\n" +
+                            "  <div class=\"card-body\">\n" +
+                            "    <h5 class=\"card-title\">{{business.name}}</h5>\n" +
+                            "       <h6 class=\"card-subtitle mb-2 text-muted\">{{business.address}}</h6>\n" +
+                            "    <p class=\"card-text\">{{business.description}}</p>\n" +
+                            "    <a href=\"{% url 'leidos_app:business' business.slug %}\" class=\"btn btn-primary\">Check Us Out!</a>\n" +
+                            "  </div>\n" +
+                            "</div>"
         
         // Create Infowindow for each business marker
         var infoWindow = new google.maps.InfoWindow();
