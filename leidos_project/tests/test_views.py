@@ -75,6 +75,7 @@ class TestBusinessView(TestCase):
         self.assertEquals(response.context['sections'][0][1][0].price, 10)
 
 
+
 class TestRegisterBusinessView(TestCase):
 
 
@@ -200,33 +201,31 @@ class TestEditBusinessView(TestCase):
     def test_add_opening_hours(self):
         self.client.login(username="test_profile", password="test_profile")
         context_dict={}
-        context_dict["weekday_from"] = "Monday"
-        context_dict["weekday_to"] = "Friday"
-        context_dict["from_hour"] = "7 am"
-        context_dict["to_hour"] = "7 pm"
+        context_dict["weekday_from"] = "Tuesday"
+        context_dict["weekday_to"] = "Saturday"
+        context_dict["from_hour"] = "8 am"
+        context_dict["to_hour"] = "8 pm"
 
-        response = self.client.post(reverse("leidos_app:add_opening_hours", args= ["test-business"]), context_dict, follow=True)
+        response = self.client.post(reverse("leidos_app:add_opening_hours", args=["test-business"]), context_dict, follow=True)
         
         self.assertEquals(response.status_code, 200)
         response = self.client.get(self.edit_business_url)
 
-        self.assertContains(response, "Monday")
         self.assertContains(response, "Tuesday")
-        self.assertContains(response, "7am")
-        self.assertContains(response, "7pm")
+        self.assertContains(response, "Saturday")
+        self.assertContains(response, "8am")
+        self.assertContains(response, "8pm")
 
     def test_delete_section(self):
         self.client.login(username="test_profile", password="test_profile")
         context_dict ={}
         context_dict["name"] = "test_section"
         
-        self.client.post(reverse("leidos_app:create_section", args=    ["test-business"]), context_dict, follow=True)
+        self.client.post(reverse("leidos_app:create_section", args=["test-business"]), context_dict, follow=True)
         response = self.client.get(self.edit_business_url)
         
         #Confirm section has been added
         self.assertContains(response, "test_section")
-        context_dict_del= {}
-        context_dict_del["pk"] = "test_section"
 
         response = self.client.post(reverse("leidos_app:delete_section", args=[0]), follow=True)
 
@@ -238,6 +237,7 @@ class TestEditBusinessView(TestCase):
         self.client.login(username="test_profile", password="test_profile")
         context_dict = {}
         context_dict["name"] = "test_section"
+
 
         self.client.post(reverse('leidos_app:create_section', args=["test-business"]),context_dict, follow=True)
 
@@ -258,32 +258,17 @@ class TestEditBusinessView(TestCase):
 
     def test_delete_opening_hours(self):
         self.client.login(username="test_profile", password="test_profile")
-        context_dict={}
-        context_dict["weekday_from"] = "Monday"
-        context_dict["weekday_to"] = "Friday"
-        context_dict["from_hour"] = "7 am"
-        context_dict["to_hour"] = "7 pm"
 
-        self.client.post(reverse("leidos_app:add_opening_hours", args= ["test-business"]), context_dict, follow=True)
+        self.test_hours = OpeningHours.objects.create(business_fk=self.business_obj, weekday_from="Monday",
+                                                      weekday_to="Friday", from_hour="7AM", to_hour="7PM")
 
-        #Check opening times have been added
-        response = self.client.get(self.edit_business_url)         
-        self.assertContains(response, "Monday")
 
-        response = self.client.post(reverse("leidos_app:delete_opening_hours", args=[3]), follow=True)
+        response = self.client.post(reverse("leidos_app:delete_opening_hours", args=[self.test_hours.pk]), follow=True)
         self.assertEquals(response.status_code, 200)
-        
-        response = self.client.get(self.edit_business_url)
-        self.assertNotContains(response, "Monday")
-        self.assertNotContains(response, "Friday")
-        self.assertNotContains(response, "7am")
-        self.assertNotContains(response, "7pm")
-        
 
-
-
-
-
+        response = self.client.get(reverse('leidos_app:business', args=["test-business"]))
+        self.assertEquals(response.status_code, 200)        
+        self.assertNotIsInstance(response.context['opening_hours'], OpeningHours)
 
 
 class TestLoginView(TestCase):
